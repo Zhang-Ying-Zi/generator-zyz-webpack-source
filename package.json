@@ -12,15 +12,19 @@
   ],
   "scripts": {
     "watch": "cross-env NODE_ENV=development npx webpack --watch --config webpack.config.js",
-    "start": "cross-env NODE_ENV=development npx webpack serve --open --color --config webpack.config.js",
-    "build": "cross-env NODE_ENV=production npx webpack --config webpack.config.js"
+    "start": "webpack serve --hot --mode development --config webpack.config.js --open --color",
+    "build": "webpack --mode production --config webpack.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.13.0",
+    "@hot-loader/react-dom": "^17.0.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@types/node": "^14.14.37",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
     "@types/webpack": "^4.41.27",
     "@types/webpack-dev-server": "^3.11.3",
     "autoprefixer": "^10.2.5",
@@ -40,12 +44,14 @@
     "postcss": "^8.2.9",
     "postcss-loader": "^5.2.0",
     "prettier": "^1.19.1",
+    "react-refresh": "^0.9.0",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
     "script-loader": "^0.7.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.1.0",
     "ts-node": "^9.1.1",
+    "type-fest": "^1.0.2",
     "typescript": "^4.2.4",
     "vue-loader": "^15.9.6",
     "webpack": "^5.30.0",
@@ -53,5 +59,9 @@
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
+  },
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   }
 }

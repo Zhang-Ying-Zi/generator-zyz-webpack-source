@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     // Target latest version of ECMAScript.
     "target": "esnext",
     // Search under node_modules for non-relative imports.
@@ -16,5 +17,5 @@
     "esModuleInterop": true,
     "sourceMap": true
   },
-  "include": ["src"]
+  "include": ["./src/**/*"]
 }

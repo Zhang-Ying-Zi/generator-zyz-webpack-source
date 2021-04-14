@@ -7,9 +7,10 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 const CONSTANT = require("./CONSTANT.js");
 const cssConfig = require("./webpack-css-config.js");
-const vueConfig = require("./webpack-vue-config.js");
-const jsxConfig = require("./webpack-jsx-config.js");
+const jsConfig = require("./webpack-js-config.js");
 const tsConfig = require("./webpack-ts-config.js");
+const reactConfig = require("./webpack-react-config.js");
+const vueConfig = require("./webpack-vue-config.js");
 const f7Config = require("./webpack-framework7-config.js");
 
 const BuildMode =
@@ -58,8 +59,8 @@ if (BuildMode === "development") {
 if (BuildMode === "production") {
   pluginsConfig.push(
     new BundleAnalyzerPlugin({
-      analyzerMode: "static",
-      open: false
+      analyzerMode: "static", // server，static，json，disabled
+      openAnalyzer: false
     })
   );
 }
@@ -118,8 +119,9 @@ const config = {
     // options for resolving module requests
     // (does not apply to resolving of loaders)
     modules: ["node_modules", EntryPathBase],
-    extensions: [".js", ".json", ".jsx", ".css"],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
     alias: {
+      "react-dom": "@hot-loader/react-dom"
       // // a list of module name aliases
       // // aliases are imported relative to the current context
       // "module": "new-module",
@@ -156,8 +158,9 @@ if (BuildMode === "development") {
 module.exports = merge(
   config,
   cssConfig(BuildMode),
-  // vueConfig(BuildMode),
-  jsxConfig(BuildMode),
+  jsConfig(BuildMode),
   tsConfig(BuildMode),
+  reactConfig(BuildMode),
+  // vueConfig(BuildMode),
   f7Config(BuildMode)
 );

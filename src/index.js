@@ -1,8 +1,12 @@
+/****** test css image js ******/
+
 import { log } from "./libs/index";
 import ImgMan from "./assets/images/man.jpg";
 import "./assets/styles/index.css";
 import indexLess from "./assets/styles/indexLess.less";
 import indexScss from "./assets/styles/indexScss.scss";
+import "./ts";
+import "./ReactIndex";
 
 log("Hello Main");
 log(ImgMan);
