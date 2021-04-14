@@ -1,0 +1,77 @@
+<template>
+  <div class="page account-pages" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+
+      <div class="base-container">
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info">账号管理</div>
+        </div>
+
+        <div class="row margin-top acct-info bg-color-white">
+          <div class="col-10">手机号：</div>
+          <div class="col-90">{{user.mobile}}</div>
+          <div class="col-10">姓名：</div>
+          <div class="col-90"><input name="username" value="{{user.username}}" /></div>
+          <div class="col-10">昵称：</div>
+          <div class="col-90"><input name="nickname" value="{{user.nickname}}" /></div>
+          <div class="col-10"></div>
+          <div class="col-90"></div>
+          <div class="col-10"></div>
+          <div class="col-90 margin-bottom">
+            <a class="button button-search no-margin-left" @click="save">保存</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>
+<style>
+.acct-info .col-10 {
+  width: 90px !important;
+  line-height: 30px;
+  white-space: nowrap;
+  margin-top: 10px;
+  padding-left: 20px;
+}
+.acct-info .col-90 {
+  margin-top: 10px;
+  line-height: 30px;
+  width: calc(100% - 90px) !important;
+}
+.acct-info input {
+  width: 200px;
+  height: 30px;
+  line-height: 28px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+</style>
+<script>
+  return {
+    data: function() {
+      return {
+        user: {}
+      }
+    },
+    methods: {
+      save: function() {
+        var self = this;
+        var newUser = Object.assign(self.user, {
+          username: $$('.acct-info input[name="username"]').val() || '',
+          nickname: $$('.acct-info input[name="nickname"]').val() || ''
+        });
+        self.$app.dialog.alert(JSON.stringify(newUser));
+      }
+    },
+    on: {
+      pageInit: function () {
+        var self = this;
+        self.$setState({
+          user: JSON.parse(localStorage.kflogininfo || '{}')
+        });
+      }
+    }
+  }
+</script>

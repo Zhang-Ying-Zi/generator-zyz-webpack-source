@@ -1,0 +1,274 @@
+<template>
+  <div class="page" data-name="person-center" id="login-page">
+    <div class="page-content  tab tab-active login-screen-content" style="padding:0px !important;overflow:hidden;">
+      <div class="login-container">
+        <div class="login-form-container">
+          <div class="form-body">
+            <div class="row line-row">
+              <div class="col"><span class="lg-type" data-type="mess">验证码登录</span></div>
+              <div class="col"><span class="lg-type selected" data-type="pass">密码登录</span></div>
+            </div>
+            <div class="pno" style="margin-top: 25px;">
+              <input type="text" class="mobile width-100" name="mobile" placeholder="账号" autocomplete="off">
+            </div>
+            <div class="lg-cont" data-type="pass">
+              <input type="password" class="pwd width-100" name="pwd" placeholder="密码" autocomplete="off">
+              <span class="forget-pwd" title="忘记密码"><svg width="20" height="20" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <path d="M512 0C227.555556 0 0 227.555556 0 512s227.555556 512 512 512 512-227.555556 512-512-227.555556-512-512-512z m45.511111 853.333333c-17.066667 11.377778-28.444444 17.066667-51.2 17.066667-17.066667 0-34.133333-5.688889-51.2-17.066667-17.066667-11.377778-22.755556-28.444444-22.755555-51.2s5.688889-34.133333 22.755555-51.2c11.377778-11.377778 28.444444-22.755556 51.2-22.755555s34.133333 5.688889 51.2 22.755555c11.377778 11.377778 22.755556 28.444444 22.755556 51.2s-11.377778 39.822222-22.755556 51.2z m176.355556-443.733333c-11.377778 22.755556-22.755556 39.822222-39.822223 51.2-17.066667 17.066667-39.822222 39.822222-79.644444 73.955556l-28.444444 28.444444c-5.688889 5.688889-11.377778 17.066667-17.066667 22.755556v17.066666c0 5.688889-5.688889 17.066667-5.688889 34.133334-5.688889 34.133333-22.755556 51.2-56.888889 51.2-17.066667 0-28.444444-5.688889-39.822222-17.066667-11.377778-11.377778-17.066667-28.444444-17.066667-45.511111 0-28.444444 5.688889-51.2 11.377778-68.266667 5.688889-17.066667 17.066667-34.133333 34.133333-51.2 11.377778-17.066667 34.133333-34.133333 56.888889-51.2 22.755556-17.066667 34.133333-28.444444 45.511111-39.822222s17.066667-17.066667 22.755556-28.444445c5.688889-11.377778 11.377778-22.755556 11.377778-34.133333 0-22.755556-11.377778-45.511111-28.444445-62.577778-17.066667-17.066667-45.511111-28.444444-73.955555-28.444444-45.511111-11.377778-73.955556 0-85.333334 17.066667-17.066667 17.066667-34.133333 45.511111-45.511111 79.644444-11.377778 34.133333-28.444444 51.2-62.577778 51.2-17.066667 0-34.133333-5.688889-45.511111-17.066667-11.377778-11.377778-17.066667-28.444444-17.066666-39.822222 0-28.444444 11.377778-62.577778 28.444444-91.022222s45.511111-56.888889 85.333333-79.644445c39.822222-22.755556 79.644444-28.444444 130.844445-28.444444 45.511111 0 85.333333 5.688889 119.466667 22.755556 34.133333 17.066667 62.577778 39.822222 79.644444 68.266666 22.755556 28.444444 34.133333 62.577778 34.133333 96.711111 0 28.444444-5.688889 51.2-17.066666 68.266667z" fill="blue"></path></svg></span>
+            </div>
+            <div class="lg-cont" data-type="mess" style="display: none;">
+              <input type="text" name="code" class="width-100" style="padding-right: 100px" data-error-message="请输入验证码" placeholder="短信验证码" data-validate-on-blur="false"/>
+              <button class="button get-code">获取验证码</button>
+            </div>
+          </div>
+          <div style="margin-top: 20px">
+            <a href="#" class="button login-btn">登&nbsp;录</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style scoped>
+  .home-navbar {
+    display: none !important;
+  }
+  .login-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    margin-top: -60px;
+  }
+  .login-form-container {
+    width: 360px;
+    height: 250px;
+    margin: auto;
+    overflow: hidden;
+    padding: 0 20px;
+  }
+  .form-body input {
+    color: #333;
+    background-color: #fff !important;
+    border-radius: 25px;
+    height: 50px;
+    padding-left: 65px;
+    border: none !important;
+  }
+  .form-body > div {
+    position: relative;
+  }
+  .form-body > div::before {
+    position: absolute;
+    left: 30px;
+    top: 17px;
+    content: '';
+    width: 16px;
+    height: 16px;
+  }
+  .login-btn {
+    font-size: 18px;
+    color: #143cb4;
+    background: #ffc800;
+    border-radius: 25px;
+    height: 50px;
+    line-height: 50px;
+  }
+  .login-btn:hover {
+    background: #ffb400;
+  }
+  .login-btn:active {
+    background: #ffc800;
+  }
+  .line-row {
+    width: 94%;
+    margin-left: 3%;
+    text-align: center;
+    box-shadow: inset 0 -1px 0 0px #fff;
+    color: #fff;
+  }
+  .get-code {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    width: 100px;
+    white-space: nowrap;
+    padding: 0;
+    color: blue;
+    border-left: 1px solid #ccc;
+  }
+  .lg-type {
+    font-size: 16px;
+    padding: 0 5px;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+  }
+  .lg-type.selected {
+    border-bottom: 1.2px solid #fecb13;
+  }
+  .forget-pwd {
+    position: absolute;
+    right: 5px;
+    top: 13px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  var prefix = baseConfig.service.api
+
+  return {
+    on: {
+      pageBeforeOut: function () {
+        var self = this;
+        self.timeout && clearTimeout(self.timeout);
+      },
+      pageInit: function () {
+        var self = this;
+        var app = self.$app;
+        self.loginType = ['pass', 'mess'].indexOf(localStorage.kfloginWay) !== -1 ? localStorage.kfloginWay : 'pass'; // 验证码
+        ctrlShowLoginContent(); // 控制显示登录输入内容
+
+        $$('.popup').hide();
+        $$('.backdrop-in').remove();
+        $$('.get-code').removeClass('color-gray');
+
+        function ctrlShowLoginContent() {
+          $$('.lg-type').removeClass('selected');
+          $$('.lg-type[data-type="'+self.loginType+'"]').addClass('selected');
+          $$('.lg-cont').hide();
+          $$('.lg-cont[data-type="'+self.loginType+'"]').show();
+        }
+
+        var countdown = 60;
+        function setCodeTimeout() { //发送验证码倒计时
+          if (countdown <= 0) {
+            $$(".get-code").prop('disabled', false);
+            $$(".get-code").html("获取验证码");
+            countdown = 60;
+            $$(".get-code").removeClass("color-gray");
+            return;
+          } else {
+            $$(".get-code").prop('disabled', true);
+            $$(".get-code").html("重新发送(" + countdown + ")");
+            countdown--;
+          }
+          self.timeout = setTimeout(function () {
+            setCodeTimeout();
+          }, 1000);
+        }
+
+        function getCodeEvent() {
+          //参数校验
+          var mobile = $$('.login-form-container [name="mobile"]').val();
+
+          if (!mobile || !/^[0-9]{11}$/.test(mobile)) {
+            return app.dialog.alert('请输入正确的手机号');
+          }
+
+          $$(".get-code").prop('disabled', true);
+          //获取验证码
+          app.request({
+            url: prefix + '/auth/genValidSN',
+            method: 'POST',
+            contentType: 'application/json',
+            async: false,
+            data: {mobileno: mobile},
+            timeout: 5000,
+            success: function (data) {
+              // 倒计时
+              $$(".get-code").addClass("color-gray");
+              countdown = 60;
+              setCodeTimeout();
+            },
+            error: function (xhr, data) {
+              $$('.get-code').prop('disabled', false);
+              if (xhr.status == 0) {
+                app.dialog.alert("服务响应超时,请稍后再试", function () {});
+              } else {
+                app.dialog.alert(xhr.responseText, function () {});
+              }
+            }
+          });
+        }
+
+        $$(".login-btn").on('click', function () {
+          //参数校验
+          var mobileno = $$('#login-page [name="mobile"]').val();
+          var pwd = $$('#login-page [name="pwd"]').val();
+          var code = $$('#login-page [name="code"]').val();
+          if (!mobileno) {
+            return app.dialog.alert('请输入账号!');
+          }
+          if (self.loginType == 1 && !pwd) {
+            return app.dialog.alert('请输入密码!');
+          }
+          if (self.loginType == 2 && !code) {
+            return app.dialog.alert('请输入验证码!');
+          }
+          $$(".login-btn").text("正在登录...");
+          $$('.login-btn').prop('disabled', true);
+          
+          var url = '/auth/login';
+          var paramdata = {mobileno: mobileno, passwd: pwd, ufrom: 'mdis'}; // 密码登录
+          if (self.loginType == 2) {
+            url = '/auth/quickLogin';
+            paramdata = {mobileno: mobileno, validsn: code, ufrom: 'mdis'};
+          }
+          app.request({
+            url: prefix + url, 
+            method: 'POST',
+            contentType: 'application/json',
+            async: true,
+            data: paramdata,
+            timeout: 5000,
+            success: function (data) {
+              console.log(data)
+              // {"r":{"token":"3cc51f52630248bf92f4ffbd6716f126","username":"李敏","rolecode":"DESIGN","area":"000000000000"}}
+
+              $$('.login-btn').prop('disabled', false);
+              $$(".login-btn").text("登 录");
+
+              var r = JSON.parse(data).r;
+              window.localStorage.kflogininfo = JSON.stringify(r);
+              window.localStorage.kfuserid = r.id;
+              window.localStorage.kftoken = r.token;
+              window.localStorage.kfname = r.username || '匿名';
+              window.localStorage.kfarea = r.area;
+              location.hash = '';
+              window.location.reload();
+            },
+            error: function (xhr, data) {
+              $$('.login-btn').prop('disabled', false);
+              $$(".login-btn").text("登 录");
+              
+              if (xhr.status == 0) {
+                app.dialog.alert('服务响应超时,请稍后重试');
+              } else {
+                app.dialog.alert('账号或密码错误，请重新登录');
+              }
+            }
+          });
+
+        });
+
+        $$('.lg-type').on('click', function(e) {
+          self.loginType = $$(this).attr('data-type');
+          localStorage.kfloginWay = self.loginType;
+          ctrlShowLoginContent();
+        });
+
+        $$('.get-code').on('click', function() {
+          getCodeEvent();
+        });
+
+        $$('.forget-pwd').on('click', function() {
+          mainView.router.navigate("/pwd-reset", { animate: false, ignoreCache: true, reloadCurrent: true });
+        });
+      }
+    }
+
+  };
+</script>

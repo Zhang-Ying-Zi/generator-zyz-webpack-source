@@ -1,0 +1,234 @@
+<template>
+  <div class="page alarmed-page" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+
+      <div class="base-container">
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info">历史告警</div>
+        </div>
+
+        <div class="inline-labels list search-container">
+          <form class="search-form">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-media">告警名称</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" name="name" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">设备类型</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="etype" class="select-item">
+                      <option value="">全部</option>
+                      <option value="L">路内地锁</option>
+                      <option value="G">场库地锁</option>
+                      <option value="D">道闸</option>
+                      <option value="C">摄像头</option>
+                      <option value="S">LED显示屏</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">位置</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" name="position" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">告警等级</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="lvl" class="select-item">
+                      <option value="">全部</option>
+                      <option value="3">紧急</option>
+                      <option value="2">重要</option>
+                      <option value="1">一般</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">告警时间</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="开始时间" name="ctimestart" class="select-item date-item"/>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input" style="padding-left: 5px !important;">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <div class="time-adon"></div>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input" style="padding-left: 5px !important;">
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="结束时间" name="ctimeend" class="select-item date-item"/>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap btn">
+                    <a class="button button-search" @click="search">筛选</a>
+                  </div>
+                </div>
+              </li>
+              <li class="stotal-num">
+                <label>共<span class="totalnum">{{total}}</span>条</label></li>
+            </ul>
+          </form>
+        </div>
+        <div class="table-container">
+          <div class="data-table data-table-init">
+            <table>
+              <thead>
+                <tr class="text-align-center">
+                  <th class="label-cell xuhao">序号</th>
+                  <th class="label-cell">告警名称</th>
+                  <th class="label-cell">告警数值</th>
+                  <th class="label-cell">设备类型</th>
+                  <th class="label-cell">设备编号</th>
+                  <th class="label-cell">位置</th>
+                  <th class="label-cell">告警等级</th>
+                  <th class="label-cell">告警时间</th>
+                  <th class="label-cell">告警恢复时间</th>
+                </tr>
+              </thead>
+              <tbody class="table-trs bg-color-white">
+                {{#each list}}
+                <tr class="text-align-center">
+                  <td class="label-cell xuhao">{{@index+1}}</td>
+                  <td class="label-cell">{{cname}}</td>
+                  <td class="label-cell">{{val}}</td>
+                  <td class="label-cell">
+                    {{#js_if "this.etype=='L'"}}路内地锁{{/js_if}}
+                    {{#js_if "this.etype=='G'"}}场库地锁{{/js_if}}
+                    {{#js_if "this.etype=='D'"}}道闸{{/js_if}}
+                    {{#js_if "this.etype=='C'"}}摄像头{{/js_if}}
+                    {{#js_if "this.etype=='S'"}}LED显示屏{{/js_if}}
+                    {{js "['L','G', 'D', 'C', 'S'].indexOf(this.etype) == -1 ? this.etype : ''"}}
+                  </td>
+                  <td class="label-cell">{{no}}</td>
+                  <td class="label-cell">{{position}}</td>
+                  <td class="label-cell lvl-{{lvl}}" style="color: #4D4D4D">
+                    {{js "this.lvl == 3 ? '紧急告警': (this.lvl == 2 ? '重要告警': (this.lvl == 1 ? '一般告警' : ''))"}}
+                  </td>
+                  <td class="label-cell">{{dateformat ctime 'yyyy-MM-dd hh:mm:ss' '1'}}</td>
+                  <td class="label-cell">{{dateformat backtime 'yyyy-MM-dd hh:mm:ss' '1'}}</td>
+                </tr>
+                {{else}}
+                <tr class="nodata">
+                  <td colspan="20">没有数据</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="page-container pages">
+            <div class="page-r">
+              <ul id="page_ul" class="page-ul"></ul>
+              <div class="float-left total-num">&nbsp;共<span>{{js "Math.ceil(this.total/this.queryParam.pagesize)"}}</span>页&nbsp;转至&nbsp;
+              </div>
+              <div class="float-left"><input name="jumppageno" /></div>
+              <div class="float-left" style="line-height: 30px">&nbsp;页&nbsp;<button @click="jump()"
+                  class="page-ok-btn pointer">确定</button></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</template>
+<script>
+
+  return {
+    data: function () {
+      return {
+        queryParam: {
+          curpage: 1,
+          pagesize: PAGE_SIZE,
+          name: '', 
+          etype: '', 
+          position: '', 
+          lvl: '',
+          ctimestart: '', 
+          ctimeend: ''
+        },
+        list: [],
+        total: 0,
+        pageConfig: Object.assign({}, PAGE_DEFAULT_CONFIG, { noInitCallback: true }),
+      }
+    },
+    methods: {
+      search: function () {
+        var self = this;
+        var app = self.$app;
+        var fdata = app.form.convertToData('.search-form');
+        var copyparam = Object.assign({}, self.queryParam);
+        Object.keys(fdata).forEach(function (key) {
+          copyparam[key] = fdata[key] == '全部' ? '' : fdata[key];
+        });
+        if (copyparam.ctimestart) {
+          copyparam.ctimestart = new Date(copyparam.ctimestart).format('yyyy-MM-dd 00:00:00');
+        }
+        if (copyparam.ctimeend) {
+          copyparam.ctimeend = new Date(copyparam.ctimeend).format('yyyy-MM-dd 23:59:59');
+        }
+        self.queryParam = Object.assign({}, copyparam);
+        self.queryParam.curpage = 1;
+        $$('input[name="jumppageno"]').val('');
+        self.getList();
+      },
+      jump: function () {
+        var self = this;
+        var pagenums = Math.ceil(self.total / self.queryParam.pagesize) || 1;
+        var curnum = ($$('input[name="jumppageno"]').val() || 0) - 0;
+        if (curnum == self.queryParam.curpage || curnum <= 0 || curnum > pagenums) {
+          return;
+        }
+        self.pageIng.initPage(self.total, pagenums, curnum);
+        self.queryParam.curpage = curnum;
+        self.getList(true);
+      },
+      getList: function (isPageNoClick) {
+        var self = this;
+        apiService('/dispatch/'+ localStorage.curgrpid +'/alarm/listhis', self.queryParam, function (data) { // 请求成功
+          var total = data.count || 0;
+          self.$setState({ list: data.list || [], total: total });
+
+          if (isPageNoClick) return; // 点击页码，无需初始化分页
+
+          self.pageConfig.totalCount = total || 0;
+          self.pageIng = new Paging(self.pageConfig, function (pageIndex, pageSize) {
+            self.queryParam.curpage = +pageIndex;
+            self.getList(true);
+          });
+        });
+      }
+    },
+    on: {
+      pageInit: function () {
+        initDate();
+
+        var self = this;
+        self.getList();
+      }
+    }
+  }
+</script>

@@ -1,0 +1,368 @@
+<template>
+  <div class="page users-pages" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+
+      <div class="base-container">
+
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info">用户管理</div>
+        </div>
+
+        <div class="inline-labels list search-container">
+          <form class="search-form">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-media">手机号</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="手机号" name="mobile" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+
+              <li class="item-content item-input">
+                <div class="item-media">姓名</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="姓名" name="username" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap btn">
+                    <a class="button button-search" @click="search">筛选</a>
+                  </div>
+                </div>
+              </li>
+              <li class="stotal-num">
+                <label>共<span class="totalnum">{{total}}</span>条</label>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap btn">
+                    <a class="button button-add" @click="edit(0)">新增</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </div>
+        <div class="table-container">
+          <div class="data-table data-table-init">
+            <table>
+              <thead>
+                <tr class="text-align-center">
+                  <th class="label-cell xuhao">序号</th>
+                  <th class="label-cell">手机号</th>
+                  <th class="label-cell">姓名</th>
+                  <th class="label-cell">角色</th>
+                  <th class="label-cell">创建时间</th>
+                  <th class="label-cell">状态</th>
+                  <th class="label-cell text-left">操作</th>
+                </tr>
+              </thead>
+              <tbody class="table-trs bg-color-white">
+                {{#each userList}}
+                  <tr class="text-align-center">
+                    <td class="label-cell xuhao">{{@index+1}}</td>
+                    <td class="label-cell">{{mobile}}</td>
+                    <td class="label-cell">{{username}}</td>
+                    <td class="label-cell">{{js "this.rolesname || this.roles"}}</td>
+                    <td class="label-cell">{{dateformat createtime 'yyyy-MM-dd hh:mm:ss' ''}}</td>
+                    <td class="label-cell">{{js "this.valid?'启用':'禁用'"}}</td>
+                    <td class="label-cell wd-100 nowrap">
+                      {{#if isme}}
+                      {{else}}
+                        <a class="state-blue" href="#" @click="edit({{userid}})">编辑</a>&nbsp;&nbsp;
+                        <span style="color: #eee; transform: scale(1, 1.2);">|</span>&nbsp;&nbsp;
+                        <a class="btn-del color-red" href="#" @click="del({{userid}})">删除</a>
+                      {{/if}}
+                    </td>
+                  </tr>
+                {{else}}
+                  <tr class="nodata">
+                    <td colspan="20" >没有数据</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="page-container pages">
+            <div class="page-r">
+              <ul id="page_ul" class="page-ul"></ul>
+              <div class="float-left total-num">&nbsp;共<span>{{js "Math.ceil(this.total/this.queryParam.pagesize)"}}</span>页&nbsp;转至&nbsp;
+              </div>
+              <div class="float-left"><input name="jumppageno" /></div>
+              <div class="float-left" style="line-height: 30px">&nbsp;页&nbsp;<button @click="jump()"
+                  class="page-ok-btn pointer">确定</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新增|编辑 -->
+        <div class="dialog dialog-buttons-2 edit-dialog" id="edit-user">
+          <div class="dialog-inner">
+            <div class="dialog-title"><strong class="etitle">编辑</strong>
+              <div class="float-right">
+                <a class="link dialog-close close-btn"></a>
+              </div>
+            </div>
+            <div class="row" style="width: calc(100% - 40px);padding: 0px 20px;">
+              <div class="col-25">手机号：</div><div class="col-75">
+                <input type="text" name="editMobile" value="{{current.mobile}}" placeholder="请输入手机号"/></div>
+              <div class="col-25">姓名：</div><div class="col-75">
+                <input type="text" name="editName" value="{{current.username}}" placeholder="请输入姓名"/></div>
+              <div class="col-25">权限：</div>
+              <div class="col-75 bg-color-white col-roles" style="min-height: 60px; max-height: 180px;padding-top: 5px;overflow-y: auto !important;border:1px solid #ccc">
+              </div>
+              <div class="col-25" style="margin-top: 8px;">状态：</div><div class="col-75 col-valid" style="margin-top: 8px;">
+              </div>
+            </div>
+          </div>
+          <div class="dialog-buttons">
+            <span class="dialog-button dialog-close">取消</span>
+            <span class="dialog-button dialog-button-bold save-user" @click="save">确定</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style>
+  .btn-del:hover {
+    color: #f81888 !important;
+  }
+  .button-add {
+    margin-left: 20px;
+    width: 68px;
+    height: 30px !important;
+    line-height: 30px !important;
+    color: #fff !important;
+    background: linear-gradient(180deg, #08cc5a 0, #04a553 100%);
+  }
+  .button-add:hover {
+    background: linear-gradient(0, #08cc5a 0, #04a553 100%) !important;
+  }
+</style>
+<script>
+  var rolehtml = '{{#each current.selectRoles}}\
+    <label for="userrole{{@index}}" class="width-100 display-inline-flex">\
+      <input type="checkbox" name="editRoles" style="margin-top: 8px;width:20px !important;" id="userrole{{@index}}" value="{{code}}" {{#if checked}}checked="checked"{{/if}}>\
+        {{cname}}\
+    </label>\
+  {{/each}}';
+  var validhtml = '<select name="editValid" class="bg-color-white has-select" {{#if current.userid}}{{else}}disabled="true"{{/if}}>\
+    <option value="1" {{#if current.valid}}selected="selected"{{/if}}>启用</option>\
+    <option value="0" {{#if current.valid}}{{else}}selected="selected"{{/if}}>禁用</option>\
+  </select>';
+
+  return {
+    data: function() {
+      return {
+        queryParam: {
+          start: 0,
+          pagesize: PAGE_SIZE,
+          username: '',
+          mobile: ''
+        },
+        current: {},
+        curpage: 1,
+        userList: [],
+        roles: undefined,
+        total: 0,
+        pageConfig: Object.assign({}, PAGE_DEFAULT_CONFIG, { noInitCallback: true }),
+      }
+    },
+    methods: {
+      search: function () {
+        var self = this;
+        var app = self.$app;
+        var fdata = app.form.convertToData('.search-form');
+        var copyparam = Object.assign({}, self.queryParam);
+        Object.keys(fdata).forEach(function (key) {
+          copyparam[key] = fdata[key] == '全部' ? '' : fdata[key];
+        });
+        if (copyparam.begintime) {
+          copyparam.begintime = new Date(copyparam.begintime).format('yyyy-MM-dd 00:00:00');
+        }
+        if (copyparam.endtime) {
+          copyparam.endtime = new Date(copyparam.endtime).format('yyyy-MM-dd 23:59:59');
+        }
+        self.queryParam = Object.assign({}, copyparam);
+        self.curpage = 1;
+        $$('input[name="jumppageno"]').val('');
+        self.getList();
+      },
+      jump: function () {
+        var self = this;
+        var pagenums = Math.ceil(self.total / self.queryParam.pagesize) || 1;
+        var curnum = ($$('input[name="jumppageno"]').val() || 0) - 0;
+        if (curnum == self.curpage || curnum <= 0 || curnum > pagenums) {
+          return;
+        }
+        self.pageIng.initPage(self.total, pagenums, curnum);
+        self.curpage = curnum;
+        self.queryParam.start = (curnum > 1 ? curnum - 1 : 0) * self.queryParam.pagesize;
+        self.getList(true);
+      },
+      getList: function (isPageNoClick) {
+        var self = this;
+        apiService('/grp/' + localStorage.curgrpid + '/user/listUser', self.queryParam, function (data) { // 请求成功
+          var total = data.cnt || 0;
+          if (self.roles && self.roles.length) {
+            var roleObj = {};
+            self.roles.forEach(function(n){roleObj[n.code] = n.cname;})
+            data.list.forEach(function(m) {
+              if (m.roles) {
+                var names = [];
+                m.roles.forEach(function(mc) {
+                  names.push(roleObj[mc] || mc);
+                });
+                m.rolesname = names.join(',');
+              }
+            });
+          }
+          self.$setState({ userList: data.list || [], total: total });
+
+          if (isPageNoClick) return; // 点击页码，无需初始化分页
+
+          self.pageConfig.totalCount = total || 0;
+          self.pageIng = new Paging(self.pageConfig, function (pageIndex, pageSize) {
+            self.curpage = +pageIndex;
+            self.queryParam.start = (pageIndex - 1) * pageSize;
+            self.getList(true);
+          });
+        });
+      },
+      edit: function (userID) { // 编辑
+        var self = this;
+        self.editId = userID - 0;
+        var curinfo = Object.assign({}, self.userList.find(function(cc) {return cc.userid == userID;}));
+        self.dialog && self.dialog.destroy();
+
+        if (!self.roles) {
+          apiService('/grp/' + localStorage.curgrpid + '/user/listGrpRole', {}, function (data) {
+            self.roles = data || [];
+            self.edit(userID);
+          });
+          return;
+        }
+
+        curinfo.selectRoles = self.roles.map(function(r){r.checked = false; return r; });
+        if (+userID == 0) { // 新增
+          curinfo.valid = true; // 默认有效 
+          $$('.etitle').text('新增');
+          $$('#edit-user input[name="editMobile"]').removeAttr('disabled');
+        } else {
+          if (curinfo.roles && curinfo.roles.length) {
+            curinfo.selectRoles.forEach(function(mr) {
+              if (curinfo.roles.indexOf(mr.code) !== -1) {
+                mr.checked = true;
+              }
+            });
+          }
+          $$('.etitle').text('编辑');
+          $$('#edit-user input[name="editMobile"]').prop('disabled', true);
+        }
+        var html1 = Template7.compile(rolehtml)({ current: curinfo});
+        $$("#edit-user .col-roles").html(html1);
+        var html2 = Template7.compile(validhtml)({ current: curinfo});
+        $$("#edit-user .col-valid").html(html2);
+        self.$setState({current: curinfo});
+
+        self.dialog = self.$app.dialog.create({
+          el: '#edit-user',
+          on: {
+            opened: function () {
+              $$('#edit-user .dialog-close').on('click', function() {
+                self.dialog.close();
+              });
+            }
+          }
+        });
+        self.dialog.open();
+      },
+      save: function() {
+        var self = this;
+        var phone = $$('#edit-user input[name="editMobile"]').val();
+        var name = $$('#edit-user input[name="editName"]').val();
+        var valid = $$('#edit-user select[name="editValid"]').val();
+        if (!phone.trim() || !/^[0-9]{11}$/.test(phone)) {
+          self.dialog.close();
+          return self.$app.dialog.alert('请输入正确的手机号', function() {
+            self.dialog.open();
+          });
+        }
+        if (!name) {
+          self.dialog.close();
+          return self.$app.dialog.alert('姓名不能为空', function() {
+            self.dialog.open();
+          });
+        }
+        if (name.length > 20) {
+          self.dialog.close();
+          return self.$app.dialog.alert('姓名长度不能超过20', function() {
+            self.dialog.open();
+          });
+        }
+        var newroles = [];
+        $$('input[name="editRoles"]:checked').each(function () {
+          newroles.push($$(this).val());
+        });
+
+        var param = {
+          mobile: phone.trim(),
+          username: name,
+          valid: +valid == 1,
+          roles: newroles
+        };
+        var lasturl = '/addUser';
+        if (self.editId) {
+          param.userid = self.editId; // 修改
+          lasturl = '/editUser';
+        }
+
+        self.dialog.close();
+        apiService('/grp/' + localStorage.curgrpid + '/user'+ lasturl, param, function (data) {
+          self.dialog.close();
+          self.$app.dialog.alert('保存成功', function() {
+            self.getList();
+          });
+        }, function() {
+          self.dialog.open();
+        });
+      },
+      del: function(uid) {
+        var self = this;
+        if (uid) {
+          self.$app.dialog.confirm('确定删除此用户？', function() {
+            apiService('/grp/' + localStorage.curgrpid + '/user/delUser', {userid: uid}, function (data) {
+              self.$app.dialog.alert('删除成功');
+              self.curpage = 1;
+              self.queryParam.start = 0;
+              self.getList();
+            }, function() {
+              self.$app.dialog.alert('删除失败');
+            });
+          });
+        }
+      }
+    },
+    on: {
+      pageInit: function () {
+        var self = this;
+        apiService('/grp/' + localStorage.curgrpid + '/user/listGrpRole', {}, function (data) {
+          self.roles = data || [];
+        });
+
+        self.getList();
+      }
+    }
+  }
+</script>

@@ -1,0 +1,382 @@
+<template>
+  <div class="page logs-page" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+
+      <div class="base-container">
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info">接听记录</div>
+        </div>
+
+        <div class="inline-labels list search-container">
+          <form class="search-form">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-media">接听人员</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" name="username" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">问题分类</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="troubletype" class="select-item">
+                      <option value="">全部</option>
+                      <option value="TX">通信问题</option>
+                      <option value="EQ">设备故障</option>
+                      <option value="EV">环境问题</option>
+                      <option value="OT">其他原因</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">当前结果</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="curesult" class="select-item">
+                      <option value="">全部</option>
+                      <option value="1">已结单</option>
+                      <option value="2">运维处理</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">所在位置</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" name="location" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap btn">
+                    <a class="button button-search" @click="search">筛选</a>
+                  </div>
+                </div>
+              </li>
+              <li class="stotal-num">
+                <label>共<span class="totalnum">{{total}}</span>条</label></li>
+            </ul>
+          </form>
+        </div>
+        <div class="table-container">
+          <div class="data-table data-table-init">
+            <table>
+              <thead>
+                <tr class="text-align-center">
+                  <th class="label-cell xuhao">序号</th>
+                  <th class="label-cell">发起人</th>
+                  <th class="label-cell">发起时间</th>
+                  <th class="label-cell">结束时间</th>
+                  <th class="label-cell">接听人员</th>
+                  <th class="label-cell">接听类型</th>
+                  <th class="label-cell">持续时间</th>
+                  <th class="label-cell">问题分类</th>
+                  <th class="label-cell">当前结果</th>
+                  <th class="label-cell text-align-left">所在位置</th>
+                  <th class="label-cell">设备编号</th>
+                  <th class="label-cell text-align-left nowrap" style="max-width: 200px">问题描述</th>
+                  <th class="label-cell">操作</th>
+                </tr>
+              </thead>
+              <tbody class="table-trs bg-color-white">
+                {{#each list}}
+                  <tr class="text-align-center">
+                    <td class="label-cell xuhao">{{@index+1}}</td>
+                    <td class="label-cell">{{js "this.openid || this.customeropenid || ''"}}</td>
+                    <td class="label-cell">{{dateformat begintime 'yyyy-MM-dd hh:mm:ss' ''}}</td>
+                    <td class="label-cell">{{dateformat endtime 'yyyy-MM-dd hh:mm:ss' ''}}</td>
+                    <td class="label-cell">{{js "this.nickname || ''"}}</td>
+                    <td class="label-cell">
+                      {{#js_if "this.overreason == 'normal'"}}正常{{/js_if}}
+                      {{#js_if "this.overreason == 'busy'"}}在忙{{/js_if}}
+                      {{#js_if "this.overreason == 'timeout'"}}超时{{/js_if}}
+                      {{#js_if "this.overreason == 'refuse'"}}拒接{{/js_if}}
+                      {{#js_if "this.overreason == 'cancel'"}}取消{{/js_if}}
+                      {{#js_if "this.overreason == 'force'"}}中断{{/js_if}}
+                    </td>
+                    <!-- lasttime -->
+                    <td class="label-cell">{{duringtime}}</td>
+                    <td class="label-cell">
+                      {{#js_if "this.troubletype == 'TX'"}} 通信问题 {{/js_if}}
+                      {{#js_if "this.troubletype == 'EQ'"}} 设备故障 {{/js_if}}
+                      {{#js_if "this.troubletype == 'EV'"}} 环境问题 {{/js_if}}
+                      {{#js_if "this.troubletype == 'OT'"}} 其他问题 {{/js_if}}
+                    </td>
+                    <td class="label-cell">
+                      {{#js_if "this.curesult == '1'"}} 已结单 {{/js_if}}
+                      {{#js_if "this.curesult == '2'"}} 运维处理 {{/js_if}}
+                    </td>
+                    <td class="label-cell text-align-left">{{location}}</td>
+                    <td class="label-cell">{{js "this.equipno || this.equip || ''"}}</td>
+                    <td class="label-cell text-align-left nowrap" style="max-width: 200px;word-break: break-all;text-overflow: ellipsis;overflow: hidden;">
+                      {{#js_if "this.remark && this.remark.length > 22"}}
+                        <span class="outtext pointer" data-popover=".popover-info" data-text="{{remark}}">{{remark}}</span>
+                      {{/js_if}}
+                      {{#js_if "this.remark && this.remark.length <= 22"}}
+                        {{remark}}
+                      {{/js_if}}
+                    </td>
+                    <td class="label-cell">
+                      <a class="state-blue" href="#" @click="edit({{sn}})">编辑</a>
+                    </td>
+                  </tr>
+                {{else}}
+                  <tr class="nodata">
+                    <td colspan="20">没有数据</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="page-container pages">
+            <div class="page-r">
+              <ul id="page_ul" class="page-ul"></ul>
+              <div class="float-left total-num">&nbsp;共<span>{{js "Math.ceil(this.total/this.queryParam.pagesize)"}}</span>页&nbsp;转至&nbsp;</div>
+              <div class="float-left"><input name="jumppageno"/></div>
+              <div class="float-left" style="line-height: 30px">&nbsp;页&nbsp;<button @click="jump()" class="page-ok-btn pointer">确定</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 编辑 -->
+      <div class="dialog dialog-buttons-2" id="edit-jtlog">
+        <div class="dialog-inner">
+          <div class="dialog-title"><strong>编辑</strong>
+            <div class="float-right">
+              <a class="link dialog-close close-btn"></a>
+            </div>
+          </div>
+          <div class="row jt-edit" style="width: calc(100% - 40px);padding: 0px 20px;">
+            <div class="col-25">发起人：</div><div class="col-75">{{current.openid}}</div>
+            <div class="col-25">接听人员：</div><div class="col-75">{{js "this.current.nickname || ''"}}</div>
+            <div class="col-25">接听类型：</div><div class="col-75">
+              {{#js_if "this.current.overreason == 'normal'"}}正常{{/js_if}}
+              {{#js_if "this.current.overreason == 'busy'"}}在忙{{/js_if}}
+              {{#js_if "this.current.overreason == 'timeout'"}}超时{{/js_if}}
+              {{#js_if "this.current.overreason == 'refuse'"}}拒接{{/js_if}}
+              {{#js_if "this.current.overreason == 'cancel'"}}取消{{/js_if}}
+              {{#js_if "this.current.overreason == 'force'"}}中断{{/js_if}}
+            </div>
+            <div class="col-25">问题描述：</div>
+            <div class="col-75">
+              <textarea rows="4" name="editSdesc" value="{{current.remark}}" class="width-100" style="border:1px solid #ccc;padding:5px 10px;"></textarea>
+            </div>
+            <div class="col-25" style="margin-top: 14px;">问题分类：</div>
+            <div class="col-75" style="margin-top: 10px;">
+              <button data-type="TX" class="quetype button button-outline">通信问题</button>
+              <button data-type="EQ" class="quetype button button-outline">设备故障</button>
+              <button data-type="EV" class="quetype button button-outline">环境原因</button>
+              <button data-type="OT" class="quetype button button-outline">其他原因</button>
+            </div>
+            <div class="col-25 no-margin-bottom">当前结果：</div>
+            <div class="col-75 radios">
+              <input class="mt-10" type="radio" name="editResult" id="rst3" value="1">
+              <label class="pointer" style="margin-right: 18px" for="rst3">已结单</label>
+              <input class="mt-10" type="radio" name="editResult" id="rst4" value="2">
+              <label class="pointer" style="margin-right: 18px" for="rst4">运维处理</label>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-buttons">
+          <span class="dialog-button dialog-close">取消</span>
+          <span class="dialog-button dialog-button-bold update-jtlog" @click="save">确定</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style>
+  #edit-jtlog {
+    width: 420px;
+    margin-left: -210px;
+    top: 50%;
+    margin-top: -210px;
+    color: #333;
+  }
+  #edit-jtlog .col-25 {
+    color: #999;
+    text-align: right;
+    margin-bottom: 8px;
+    width: 70px;
+    white-space: nowrap;
+  }
+  #edit-jtlog .col-75 {
+    width: calc(100% - 70px);
+  }
+  #edit-jtlog .col-25, #edit-jtlog .col-75 {
+    line-height: 30px;
+  }
+  .quetype {
+    color: #333 !important;
+    border-color: #ccc !important;
+    padding: 0 !important;
+  }
+  .quetype.selected {
+    border-color: #00b400 !important;
+    background: #00b400 !important;
+    color: #fff !important;
+  }
+  #edit-jtlog input[type="radio"] + label::before {
+    border-color: #ccc;
+  }
+</style>
+<script>
+
+  return {
+    data: function() {
+      return {
+        queryParam: {
+          start: 1,
+          pagesize: PAGE_SIZE,
+          username: '',
+          troubletype: '',
+          curesult: '',
+          location: ''
+        },
+        list: [],
+        total: 0,
+        current: {},
+        pageConfig: PAGE_DEFAULT_CONFIG
+      }
+    },
+    methods: {
+      save: function () {
+        var self = this;
+        if (!self.current.sn) {
+          return;
+        }
+        var myinfo = {
+          sn: self.current.sn,
+          remark: $$('.jt-edit [name="editSdesc"]').val(),
+          curesult: $$('.jt-edit [name="editResult"]:checked').val(),
+          troubleType: $$('.quetype.selected').length && $$('.quetype.selected')[0].dataset.type || ''
+        }
+        if (!myinfo.troubleType) {
+          self.isNewOpen = false;
+          self.dialog.close();
+          return app.dialog.alert('请选择问题分类', function() {
+            self.dialog.open();
+          });
+        }
+        if (!myinfo.curesult) {
+          self.isNewOpen = false;
+          self.dialog.close();
+          return app.dialog.alert('请选择当前处理结果', function() {
+            self.dialog.open();
+          });
+        }
+        apiService('/webrtc2/saveRecord', myinfo, function (data) {
+          self.dialog.close();
+          self.$app.dialog.alert('保存成功', function() {
+            self.getList();
+          });
+        });
+      },
+      edit: function (cid) { // 编辑
+        var self = this;
+        if (!cid) {
+          return;
+        }
+        $$('.quetype').removeClass('selected');
+        $$('.jt-edit input[name="editResult"]').prop("checked", false);
+
+        var curinfo = Object.assign({}, self.list.find(function(cc) {return cc.sn == cid;}));
+        self.$setState({current: curinfo});
+        self.isNewOpen = true;
+
+        if (self.dialog) {
+          self.dialog.open();
+          return;
+        }
+        self.dialog = self.$app.dialog.create({
+          el: '#edit-jtlog',
+          on: {
+            opened: function () {
+              if (self.isNewOpen) {
+                $$('.jt-edit textarea[name="editSdesc"]').val(self.current.remark);
+                $$('.jt-edit input[value="'+ self.current.curesult +'"]').prop("checked", true);
+                $$('.quetype[data-type="'+ self.current.troubletype +'"]').addClass('selected');
+              }
+              $$('.quetype').off('click');
+              $$('.quetype').on('click', function(e) {
+                var x = $$(e.target);
+                if (x.hasClass('quetype')) {
+                  $$('.quetype').removeClass('selected');
+                  x.toggleClass('selected');
+                }
+              });
+              $$('.dialog-close').on('click', function() {
+                self.dialog.close();
+              });
+            }
+          }
+        });
+        self.dialog.open();
+      },
+      search: function() {
+        var self = this;
+        var app = self.$app;
+        var fdata = app.form.convertToData('.search-form');
+        var copyparam = Object.assign({}, self.queryParam);
+        Object.keys(fdata).forEach(function (key) {
+          copyparam[key] = fdata[key] == '全部' ? '' : fdata[key];
+        });
+        self.queryParam = Object.assign({}, copyparam);
+        self.queryParam.start = 1;
+        $$('input[name="jumppageno"]').val('');
+        self.getList();
+      },
+      jump: function() {
+        var self = this;
+        var pagenums = Math.ceil(self.total / self.queryParam.pagesize) || 1;
+        var curnum = ($$('input[name="jumppageno"]').val() || 0) - 0;
+        if (curnum == self.queryParam.start || curnum <= 0 || curnum > pagenums) {
+          return;
+        }
+        self.pageIng.initPage(self.total, pagenums, curnum);
+        self.queryParam.start = (curnum - 1) * self.queryParam.pagesize;
+        self.getList(true);
+      },
+      getList: function(isPageNoClick) {
+        var self = this;
+        if (isPageNoClick) { // 不刷新总数，只查询列表数据
+          apiService('/webrtc2/getServiceRecords', self.queryParam, function (data) { // 请求成功
+            data.forEach(function(itemd) {
+              if (itemd.endtime && itemd.begintime) {
+                itemd.duringtime = formatCallDuring(itemd.endtime - itemd.begintime, true);
+              }
+            });
+            self.$setState({ list: data || []});
+          });
+          return;
+        }
+        apiService('/webrtc2/getServiceRecordsCounts', self.queryParam, function (total) { // 请求成功
+          self.pageConfig.totalCount = total || 0;
+          self.total = total || 0;
+          self.pageIng = new Paging(self.pageConfig, function (pIndex, pSize) {
+            self.queryParam.start = (pIndex - 1) * pSize;
+            self.getList(true);
+          });
+        });
+      }
+    },
+    on: {
+      pageInit: function () {
+        var self = this;
+        
+        self.getList();
+      }
+    }
+  }
+</script>

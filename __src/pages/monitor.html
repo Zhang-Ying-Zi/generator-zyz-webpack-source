@@ -1,0 +1,125 @@
+<template>
+  <div class="page real-monitor-page" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+      <div class="base-container">
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info">实时监控</div>
+        </div>
+
+        <div class="width-100 mt-20">
+          {{#each pklist}}
+            <div class="col-100" style="height: 40px;line-height: 40px;color:#333;font-size: 16px;"><b>{{cname}}：</b></div>
+            <div class="row grow">
+              {{#each children}}
+                <div class="card col-20 no-margin margin-bottom" style="box-shadow: none;width: calc(20% - 16px);">
+                  <div class="card-content pointer monitor-card" @click="goToDevices('{{tag}}', '{{cname}}')">
+                    <div class="row">
+                      <div class="col-70" style="width: 72% !important;padding-right: 20px;">
+                        <div class="nowrap" style="overflow: hidden;text-overflow: ellipsis;"><b style="color: #333;">{{cname}}</b></div>
+                        <div class="nowrap" style="margin-top: 3px;overflow: hidden;text-overflow: ellipsis;">{{addr}}</div>
+                        <span class="label-type type-{{ctype}}">{{js "this.ctype == 'L' ? '路内停车场' : (this.ctype == 'P' ? '充电桩停车场' : '场库停车场')"}}</span>
+                      </div>
+                      <div class="col-30 text-align-center" style="width: 28% !important;margin-right: -10px;">
+                        <div><img width="48" height="48" src="img/icon_lvl_{{lvl}}.png"></div>
+                        <div>{{#if lvl}}有告警{{else}}无告警{{/if}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {{#if @last}}
+                  <!-- 填充不满格情况 -->
+                  {{#js_if "(this.@index + 1) % 5 <= 4"}}
+                    <div class='card col-20 no-margin' style="width: calc(20% - 16px);"></div>
+                  {{/js_if}}
+                  {{#js_if "(this.@index + 1) % 5 <= 3"}}
+                    <div class='card col-20 no-margin' style="width: calc(20% - 16px);"></div>
+                  {{/js_if}}
+                  {{#js_if "(this.@index + 1) % 5 <= 2"}}
+                    <div class='card col-20 no-margin' style="width: calc(20% - 16px);"></div>
+                  {{/js_if}}
+                  {{#js_if "(this.@index + 1) % 5 <= 1"}}
+                    <div class='card col-20 no-margin' style="width: calc(20% - 16px);"></div>
+                  {{/js_if}}
+                {{/if}}
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="width-100 margin padding text-align-center">
+              <h4>暂无数据</h4>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style scoped>
+  .monitor-card {
+    padding: 20px;
+    color:#999;
+  }
+  .monitor-card:hover {
+    box-shadow:0px 5px 10px 0px rgba(0, 0, 0, 0.2);
+  }
+  .monitor-card:active {
+    box-shadow:0px 5px 10px 0px rgba(0, 0, 0, 0.2);
+    background:rgba(245,245,245,1);
+  }
+  .monitor-card .col-70 {
+    align-self: center;
+    border-right:1px solid #E6E6E6;
+  }
+  .label-type {
+    padding: 0 2px;
+    background: #7864F0;
+    color: #fff;
+    font-size: 12px;
+    margin: 5px 0;
+    display: inline-flex;
+  }
+  .type-L, .type-l {
+    background: #00B4F0;
+  }
+  .type-P, .type-p {
+    background: #1fdba1;
+  }
+  .grow .col-20 {
+    min-width: 250px;
+  }
+</style>
+<script>
+  return {
+    data: function () {
+      return {
+        pklist: []
+      }
+    },
+    methods: {
+      goToDevices: function (tag, cname) {
+        var self = this;
+        self.$router.navigate(`/devices/${tag}/${cname}`, { 
+          reloadCurrent: true,
+          ignoreCache: true
+        });
+      }
+    },
+    on: {
+      pageInit: function () {
+        var self = this;
+        
+        apiService('/dispatch/' + localStorage.curgrpid + '/alarm/highestAlarmByParking', null, function(pdata) {
+          pdata.forEach(function (p) {
+            p.lvl = p.lvl || p.hhlvl;
+          });
+          self.$setState({
+            pklist: [{
+              cname: localStorage.curgrpname,
+              children: pdata
+            }]
+          });
+        });
+      }
+    }
+  }
+</script>

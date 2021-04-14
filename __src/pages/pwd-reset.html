@@ -1,0 +1,234 @@
+<template>
+  <div class="page" data-name="pwd-reset">
+    <div class="page-content password-reset" style="padding:0px !important;overflow:hidden;">
+      <div class="reset-form">
+        <div class="reset-form-container">
+          <div class="text-align-center" style="position: relative;"><span style="font-size: 26px;color: #fff;">重置密码</span>
+            <a href="/login" class="back-btn display-inline-flex" data-view=".view-main" data-animate="false" data-ignore-cache="true" data-reload-current="true">
+              <svg width="20" height="20" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <path d="M861.7 447.5c-14.9-35-36.1-66.4-63.1-93.4-38.2-38.3-85.4-64.9-139-78.3-23.9-6-48.6-8.1-73.3-8.1H336.8v-83.3c0-12.1-14.1-18.8-23.5-11.2l-162 131.3c-13.7 11.1-13.7 32 0 43.1L313.4 479c9.4 7.6 23.5 0.9 23.5-11.2v-83.3h245.3c92.6 0 175.8 67.3 185.1 159.4 10.7 105.8-73 195.8-176.7 195.8h-337c-32.3 0-58.4 26.2-58.4 58.4 0 32.3 26.2 58.4 58.4 58.4h332.8c24.6 0 49.4-2.1 73.3-8.1 53.6-13.4 100.7-40.1 139-78.3 27-27 48.2-58.4 63.1-93.4 15.5-36.4 23.3-75 23.3-114.7-0.1-39.5-8-78.1-23.4-114.5z m0 0" fill="#fcd504"></path></svg>
+              返回登录</a>
+          </div>
+
+          <div class="has-icon-1">
+            <input type="text" class="width-100" name="mobile" placeholder="手机号">
+          </div>
+
+          <div>
+            <div class="row">
+              <div class="has-icon-2 col-60">
+                <input type="text" class="width-100" name="code" placeholder="验证码">
+              </div>
+              <div class="col-40">
+                <button class="button width-100 mess-code">发送验证码</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="has-icon-3">
+            <input type="password" class="width-100" name="newPassword" placeholder="新密码">
+          </div>
+
+          <div class="has-icon-3">
+            <input type="password" class="width-100" name="confirmPassword" placeholder="确认密码">
+          </div>
+
+          <div>
+            <a href="#" class="button width-100 reset-pwd-btn">修&nbsp;改</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</template>
+<style scoped>
+  .back-btn {
+    position: absolute;
+    top: 13px;
+    right: 5px;
+    color: #fcd504;
+  }
+  .reset-form {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    margin-top: -130px;
+  }
+  .reset-form-container {
+    width: 360px;
+    height: 330px;
+    margin: auto;
+    overflow: hidden;
+    padding: 0 20px;
+    background: linear-gradient(0deg, #0228C4, #002ED5);
+  }
+  .reset-form-container > div:not(:first-of-type) {
+    margin-top: 15px;
+    position: relative;
+  }
+  .reset-form-container input {
+    color: #333;
+    background-color: #fff !important;
+    border-radius: 20px;
+    height: 40px;
+    padding-left: 45px;
+    border: none !important;
+  }
+  .reset-form-container [class^='has-icon']::before {
+    position: absolute;
+    left: 20px;
+    top: 13px;
+    content: '';
+    width: 14px;
+    height: 14px;
+  }
+  .reset-pwd-btn {
+    font-size: 18px;
+    color: #143cb4;
+    background: #ffc800;
+    border-radius: 20px;
+    height: 40px;
+    line-height: 40px;
+  }
+  .reset-pwd-btn:hover {
+    background: #ffb400;
+  }
+  .reset-pwd-btn:active {
+    background: #ffc800;
+  }
+  .mess-code {
+    border: 1px solid #fff;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    color: #fff;
+    border-radius: 20px;
+    background: #1931d6;
+  }
+</style>
+<script>
+  var prefix = baseConfig.service.api
+  return {
+    on: {
+      pageBeforeOut: function () {
+        var self = this;
+        self.timeout && clearTimeout(self.timeout);
+      },
+      pageInit: function () {
+        var self = this;
+        var app = self.$app;
+
+        var countdown = 60;
+        function setCodeTimeout() { //发送验证码倒计时
+          if (countdown <= 0) {
+            $$(".mess-code").prop('disabled', false);
+            $$(".mess-code").html("获取验证码");
+            countdown = 60;
+            $$(".mess-code").removeClass("color-gray");
+            return;
+          } else {
+            $$(".mess-code").prop('disabled', true);
+            $$(".mess-code").html("重新发送(" + countdown + ")");
+            countdown--;
+          }
+          self.timeout = setTimeout(function () {
+            setCodeTimeout();
+          }, 1000);
+        }
+
+        function getResetCodeEvent() {
+          //参数校验
+          var mobile = $$('.password-reset [name="mobile"]').val();
+
+          if (!mobile || !/^[0-9]{11}$/.test(mobile)) {
+            return app.dialog.alert('请输入正确的手机号');
+          }
+
+          $$(".mess-code").prop('disabled', true);
+          //获取验证码
+          app.request({
+            url: prefix + '/auth/genValidSN',
+            method: 'POST',
+            contentType: 'application/json',
+            async: false,
+            data: {mobileno: mobile},
+            timeout: 5000,
+            success: function (data) {
+              // 倒计时
+              $$(".mess-code").addClass("color-gray");
+              countdown = 60;
+              setCodeTimeout();
+            },
+            error: function (xhr, data) {
+              $$('.mess-code').prop('disabled', false);
+              if (xhr.status == 0) {
+                app.dialog.alert("服务响应超时,请稍后再试", function () {});
+              } else {
+                app.dialog.alert(xhr.responseText, function () {});
+              }
+            }
+          });
+        }
+
+        $$(".mess-code").on('click', getResetCodeEvent);
+
+        $$(".reset-pwd-btn").on('click', function () {
+          //参数校验
+          var mobileno = $$('.password-reset [name="mobile"]').val();
+          var code = ($$('.password-reset [name="code"]').val() || '').trim();
+          var newPassword = ($$('.password-reset [name="newPassword"]').val() || '').trim();
+          var confirmPassword = ($$('.password-reset [name="confirmPassword"]').val() || '').trim();
+
+          if (!mobileno || !/^[0-9]{11}$/.test(mobileno)) {
+            return app.dialog.alert('请输入正确手机号');
+          }
+          if (!code) {
+            return app.dialog.alert('请输入验证码');
+          }
+          if (!newPassword) {
+            return app.dialog.alert('请输入新密码');
+          }
+          if (!confirmPassword) {
+            return app.dialog.alert('请输入确认密码');
+          }
+          if (confirmPassword != newPassword) {
+            return app.dialog.alert('密码和确认密码不一致');
+          }
+
+          $$(".reset-pwd-btn").text("正在修改...");
+          $$('.reset-pwd-btn').prop('disabled', true);
+
+          app.request({
+            url: prefix + '/auth/resetPasswd',
+            method: 'POST',
+            contentType: 'application/json',
+            async: false,
+            data: {mobileno: mobileno, validsn: code, passwd: newPassword},
+            timeout: 5000,
+            success: function (data) {
+              $$('.reset-pwd-btn').prop('disabled', false);
+              $$(".reset-pwd-btn").text("修 改");
+              app.dialog.alert("密码修改成功! \n 返回重新登录", function() {
+                mainView.router.navigate("/login", { animate: false, ignoreCache: true, reloadCurrent: true });
+              });
+            },
+            error: function (xhr) {
+              $$('.reset-pwd-btn').prop('disabled', false);
+              $$(".reset-pwd-btn").text("修 改");
+              if (xhr.status == 0) {
+                app.dialog.alert("服务响应超时,请稍后再试!");
+              } else {
+                app.dialog.alert(xhr.responseText || '修改密码失败！', function () {});
+              }
+            }
+          });
+        });
+
+      }
+    }
+
+  };
+</script>

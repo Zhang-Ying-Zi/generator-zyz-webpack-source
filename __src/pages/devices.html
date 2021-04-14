@@ -1,0 +1,249 @@
+<template>
+  <div class="page real-alarm-page" style="background: #f5f5f5;">
+    <div class="page-content padding-base">
+
+      <div class="base-container">
+        <div class="current-menu">
+          <div class="title">当前位置：</div>
+          <div class="info"><a href="/monitor" data-reload-current="true">实时监控</a>&nbsp;<span>></span>&nbsp;</div>
+          <div class="current">{{pkname}}</div>
+        </div>
+
+        <div class="inline-labels list search-container">
+          <form class="search-form">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-media">车位号</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap">
+                    <input type="text" name="no" class="input-item" />
+                    <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">设备状态</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="isonline" class="select-item">
+                      <option value="">全部</option>
+                      <option value="true">在线</option>
+                      <option value="false">离线</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">有无车辆</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="car" class="select-item">
+                      <option value="">全部</option>
+                      <option value="true">有</option>
+                      <option value="false">无</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-media">是否告警</div>
+                <div class="item-inner">
+                  <div class="item-input-wrap has-select">
+                    <select name="alarmstate" class="select-item">
+                      <option value="">全部</option>
+                      <option value="true">是</option>
+                      <option value="false">否</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-input-wrap btn">
+                    <a class="button button-search" @click="search">筛选</a>
+                  </div>
+                </div>
+              </li>
+              <li class="stotal-num">
+                <label>共<span class="totalnum">{{total}}</span>条</label></li>
+            </ul>
+          </form>
+        </div>
+        <div class="table-container">
+          <div class="data-table data-table-init">
+            <table>
+              <thead>
+                <tr class="text-align-center">
+                  <th class="label-cell xuhao">序号</th>
+                  <th class="label-cell">设备编号<span class="sort" data-stname="locksn"></span></th>
+                  <th class="label-cell">车位号<span class="sort" data-stname="no"></span></th>
+                  <th class="label-cell">区域&nbsp;<span class="sort" data-stname="area"></span></th>
+                  <th class="label-cell">设备状态</th>
+                  <th class="label-cell">有无车辆</th>
+                  <th class="label-cell">订单状态</th>
+                  <th class="label-cell">停稳时间<span class="sort" data-stname="ptime"></span></th>
+                  <th class="label-cell">翻转角度<span class="sort" data-stname="agl"></span></th>
+                  <th class="label-cell">当前电压<span class="sort" data-stname="v"></span></th>
+                  <th class="label-cell">信号强度</th>
+                  <th class="label-cell">信噪比</th>
+                  <th class="label-cell">维修开关</th>
+                  <th class="label-cell">是否告警</th>
+                </tr>
+              </thead>
+              <tbody class="table-trs bg-color-white">
+                {{#each list}}
+                <tr class="text-align-center">
+                  <!-- 'lock':'车位状态' -->
+                  <td class="label-cell xuhao">{{@index+1}}</td>
+                  <td class="label-cell">{{locksn}}</td>
+                  <td class="label-cell">{{no}}</td>
+                  <td class="label-cell">{{area}}</td>
+                  <td class="label-cell">
+                    {{#if offlinealarm}}
+                      <span class="text-color-red">离线</span>
+                    {{else}}
+                      <span class="text-color-green">在线</span>
+                    {{/if}}
+                  </td>
+                  <td class="label-cell">{{js "this.car ? '有' : '无'"}}</td>
+                  <td class="label-cell">{{js "this.ordersn ? '有' : '无'"}}</td>
+                  <td class="label-cell">{{dateformat ptime 'yyyy-MM-dd hh:mm:ss' '1'}}</td>
+                  <td class="label-cell">{{agl}}</td>
+                  <td class="label-cell text-lvl-{{valarm}}">{{v}}</td>
+                  <td class="label-cell">{{rsrp}}</td>
+                  <td class="label-cell">{{sinr}}</td>
+                  <td class="label-cell">
+                    <label class="toggle toggle-init color-blue">
+                      <input type="checkbox" name="togg-{{pltag}}" @click="changeOpenState('{{pltag}}', {{status}})" {{#js_if "this.status == 2"}}checked="true" {{/js_if}}>
+                      <span class="toggle-icon">
+                        <span class="close text-align-left" style="padding-left: 25px">关</span>
+                        <span class="open text-align-left" style="padding-left: 10px">开</span>
+                      </span>
+                    </label>
+                  </td>
+                  <td class="label-cell lvl-{{maxlvl}}">
+                    {{js "this.maxlvl == 3 ? '紧急告警': (this.maxlvl == 2 ? '重要告警': (this.maxlvl == 1 ? '一般告警' : '否'))"}}
+                  </td>
+                </tr>
+                {{else}}
+                <tr class="nodata">
+                  <td colspan="20">没有数据</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+<style scoped>
+  .current-menu .info a {
+    color: #999;
+  }
+  .current-menu .info a:hover {
+    color: #5078E6;
+  }
+  .sort {
+    cursor: pointer;
+    width: 5px;
+    display: inline-block;
+  }
+</style>
+<script>
+
+  return {
+    data: function () {
+      return {
+        queryParam: {
+          parkingtag: '',
+          no: '',
+          isonline: '',
+          car: '',
+          alarmstate: ''
+        },
+        total: 0,
+        list: [],
+      }
+    },
+    methods: {
+      search: function () {
+        var self = this;
+        var app = self.$app;
+        var fdata = app.form.convertToData('.search-form');
+        var copyparam = Object.assign({}, self.queryParam);
+        Object.keys(fdata).forEach(function (key) {
+          copyparam[key] = fdata[key] == '全部' ? '' : fdata[key];
+        });
+        self.queryParam = Object.assign({}, copyparam);
+        self.getList();
+      },
+      getList: function () {
+        var self = this;
+        apiService('/dispatch/'+ localStorage.curgrpid +'/alarm/listparkinglotstatus', self.queryParam, function (data) { // 请求成功
+          data.forEach(function(d) {
+            d.agl = (d.agl - 0).toFixed(2) - 0;
+            d.v = (d.v - 0).toFixed(2) - 0;
+            d.sinr = (d.sinr - 0).toFixed(2) - 0;
+            d.rsrp = (d.rsrp - 0).toFixed(2) - 0;
+          });
+          self.$setState({ list: data || [], total: data.length || 0 });
+        });
+      },
+      changeOpenState: function(detailTag, originState) {
+        var self = this;
+        $$('input[name="togg-'+ detailTag +'"]').prop('checked', originState == 2 ? true : false);
+
+        self.$app.dialog.confirm('确定更改设备维修开关？', function() {
+          apiService('/dispatch/'+ localStorage.curgrpid +'/alarm/repairButton', {tag: +detailTag, flag: originState != 2}, function (data) {
+            self.getList();
+          });
+        }, function() {});
+      }
+    },
+    on: {
+      pageInit: function () {
+        initDatetime();
+
+        var self = this;
+        var routerParams = self.$router.currentRoute.params;
+        self.queryParam.parkingtag = routerParams.tag;
+        self.pkname = decodeURI(routerParams.name);
+
+        $$('.sort').on('click', function(e) {
+          var x = $$(e.target);
+          var sortAttr = x[0].dataset.stname;
+          x.toggleClass('as');
+          
+          self.list.sort(function(a, b) {
+            var n = !isNaN(a[sortAttr] - 0), n2 = !isNaN(b[sortAttr] - 0);
+            var isDesc = x.hasClass('as'); // 是否降序
+            if (n && n2) { // 数字优先
+              return (a[sortAttr] - b[sortAttr]) * (isDesc ? 1 : -1);
+            } else if (n) {
+              return -1;
+            } else if (n2) {
+              return 1;
+            }
+            // 将含有汉字的使用localeCompare排序
+            var e = escape(a[sortAttr]).indexOf('%u') > -1, e2 = escape(b[sortAttr]).indexOf('%u') > -1;
+            if (e && e2) {
+              return isDesc ? a[sortAttr].localeCompare(b[sortAttr]) : b[sortAttr].localeCompare(a[sortAttr]);
+            } else if (e) {
+              return 1;
+            } else if (e2) {
+              return -1;
+            }
+            return a.localeCompare(b);
+          });
+          self.$setState({ list: self.list});
+        });
+
+        self.$setState({ pkname: self.pkname });
+        self.getList();
+      }
+    }
+  }
+</script>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover" />
+    <meta name="theme-color" content="#2196f3" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <title>运营监控中心</title>
+
+    <link rel="stylesheet" href="lib/css/framework7.md.min.css" />
+    <link rel="stylesheet" href="lib/css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="lib/css/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" href="css/app.css?v=1.02" />
+
+    <link rel="manifest" href="manifest.json" />
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="panel-overlay"></div>
+      <div class="view ios-edges main-view-container">
+        <div class="page" data-name="home">
+          <div class="navbar home-navbar">
+            <div class="float-left display-inline-flex">
+              <img class="padding-left margin-top pointer" src="img/logo_text.png" width="450" height="40" />
+            </div>
+            <!-- <div class="float-right exitout pointer" style="padding: 23px;height: 24px;">
+              <img src="img/icon_dropout.png" width="24" height="24" class="exit"/>
+            </div> -->
+            <ul id="topnav1" class="top-nav float-right" style="padding-inline-end: 1px;">
+              <li>
+                <div class="pks">
+                  <a href="#"><label class="nickname"></label></a>
+                </div>
+                <div class="sub width-100">
+                  <ul class="width-100">
+                    <!-- <li><a href="/account" class="account">账号管理</a></li> -->
+                    <li><a href="#" class="exit">退出登录</a></li>
+                  </ul>
+                </div>
+                <!-- <div class="sub margin-right width-100">
+                  <ul class="width-100">
+                    <li><a href="#" class="home online">我在线上</a></li>
+                    <li><a href="#" class="home offline">暂时离开</a></li>
+                  </ul>
+                </div> -->
+              </li>
+            </ul>
+            <ul class="top-nav jkdd float-right" style="padding-inline-end: 1px;display: none;">
+              <li class="pointer">
+                <div class="groups">
+                  <a href="#"><label class="group-name pointer"></label></a>
+                </div>
+                <div class="sub margin-right width-100">
+                  <ul class="width-100 group-ul"></ul>
+                </div>
+              </li>
+            </ul>
+            <ul id="topnav" class="top-nav float-right"></ul>
+          </div>
+          <!-- Scrollable page content -->
+          <div class="page-content">
+            <div class="view-main">
+              <div class="page"><div class="page-content"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最小化 -->
+      <!-- <div id="mini-normal" style="display: none;">
+        <img class="camera-icon" src="img/icon_camera.png" width="36" height="36" />
+      </div> -->
+
+      <!-- <div id="mini-call" style="display: none;">
+        <img class="call-icon" src="img/icon_call.png" width="36" height="36" />
+      </div> -->
+
+      <!-- 来电请求 -->
+      <!-- <div id="call-request" style="display: none;">
+        <div class="text-align-center text-color-white" style="background:rgba(5, 5, 5, 0.9);width: 300px;height: 300px;">
+          <div class="display-inline-block width-100">
+            <img width="16" height="16" src="img/close.svg" class="refuse-close pointer float-right" style="margin: 10px;">
+          </div>
+          <div style="margin-top: 10px;"><img width="90" height="90" class="app-hdpic" src="img/timg.jpg" style="border-radius: 8px;"></div>
+          <div style="padding: 10px 0 5px;font-size: 18px;"><strong class="app-nknm">停车用户</strong></div>
+          <div>邀请你视频聊天</div>
+          <div class="row width-100" style="position: absolute;left: 0;bottom: 30px;">
+            <div class="col text-align-right" style="width: calc(50% - 10px);"><button class="answer pointer" type="button">接听</button></div>
+            <div class="col text-align-left" style="width: calc(50% - 10px);"><button class="refuse pointer" type="button">拒绝</button></div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- 本地视频 -->
+      <!-- <div class="popup local-vedio-pop" style="display: none;">
+        <div class="page">
+          <div class="navbar" style="height: 36px !important;background:linear-gradient(0deg,rgba(40,80,200,1),rgba(80,120,230,1)) !important;">
+            <div class="navbar-inner sliding">
+              <div class="title" style="font-size: 14px;font-weight: bold;">摄像头</div>
+              <div class="right"><a class="link popup-close close-btn"></a></div>
+            </div>
+          </div>
+          <div class="page-content" style="padding: 46px 10px 10px !important;">
+            <div id="local_my" class="video-grid"></div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- 视频 -->
+      <!-- <div class="popup call-vedio-pop" style="display: none;">
+        <div class="page">
+          <div class="navbar" style="height: 36px !important;background:linear-gradient(0deg,rgba(40,80,200,1),rgba(80,120,230,1)) !important;">
+            <div class="navbar-inner sliding">
+              <div class="title" style="font-size: 14px;font-weight: bold;">视频客服</div>
+              <div class="right">
+                <a class="link mini-btn"></a>
+                <a class="link guaduan-close close-btn"></a></div>
+                <a style="display: none;" class="user-guaduan">x</a>
+            </div>
+          </div>
+          <div class="page-content" style="padding: 46px 10px 10px !important;overflow-x: hidden;height: auto;">
+            <div id="myhome" class="width-100">
+              <!-- 连接中 >
+              <div id="video_live" style="width: 50%">
+                <div id="remote_stream" class="video-placeholder"></div>
+                <div id="local_stream" class="video-placeholder"></div>
+                <div class="display-inline-flex call-icons">
+                  <div class="hangup"><div class="guaduan"><img class="pointer" src="img/btn_hangup.png" width="72" height="72" /></div><div>挂断</div></div>
+                </div>
+              </div>
+      
+              <!-- 设备信息>
+              <div id="video_info" style="width: 50%">
+                <div style="padding: 0 30px">
+                  <p class="text-align-center text-color-white margin" style="font-size: 30px;">视频来源相关设备信息</p>
+                  <div class="line" style="margin-top: 0;"></div>
+                  <div class="row" id="info_row"></div>
+                  <!-- 接通后可编辑内容 >
+                  <div id="edit_info" style="display: none;">
+                    <div class="line"></div>
+                    <div class="row">
+                      <div class="col-25">问题描述：</div><div class="col-75">
+                        <textarea class="width-100" rows="2" name="description"></textarea>
+                      </div>
+                      <div class="col-25" style="margin-top: 18px;">问题分类：</div><div class="col-75 margin-top">
+                        <button data-type="TX" class="ques button button-outline color-white">通信问题</button>
+                        <button data-type="EQ" class="ques button button-outline color-white">设备故障</button>
+                        <button data-type="EV" class="ques button button-outline color-white">环境原因</button>
+                        <button data-type="OT" class="ques button button-outline color-white">其他原因</button>
+                      </div>
+                      <div class="col-25" style="margin-top: 10px;">当前结果：</div><div class="col-75 radios" style="margin-top: 10px;">
+                        <input class="mt-10" type="radio" name="result" id="result1" value="1">
+                        <label class="pointer" style="margin-right: 18px" for="result1">已结单</label>
+                        <input class="mt-10" type="radio" name="result" id="result2" value="2">
+                        <label class="pointer" style="margin-right: 18px" for="result2">运维处理</label>
+                      </div>
+                    </div>
+                    <div class="line"></div>
+                    <div class="width-100 text-align-center">
+                      <button class="button fs16 saveinfo">保存</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+
+    <script src="config.js"></script>
+    <!-- Third library scripts -->
+    <script src="lib/framework7-4.4.0.min.js"></script>
+    <script src="lib/jquery-1.12.4.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <script src="lib/jquery.timepicker.addon.js"></script>
+    <script src="lib/jquery.hoverIntent.minified.js"></script>
+    <script src="lib/sockjs.min.js"></script>
+    <script src="lib/vertx-eventbus.js"></script>
+    <!--实时音视频 -->
+    <!-- 引入 TRTC WEB SDK 脚本 -->
+    <!-- <script src="lib/trtc/trtc.js?v=1.02"></script> -->
+    <!-- Demo 相关脚本 -->
+    <!-- <script src="lib/trtc/utils.js"></script> -->
+    <!-- <script src="lib/trtc/rtc-client.js?v=1.02"></script> -->
+
+    <script src="js/help.js?v=1.02"></script>
+    <script src="js/paging.js"></script>
+    <script src="js/app.js?v=1.02"></script>
+
+    <script>
+      $(document).ready(function() {  
+        function megaHoverOver() {
+          $(this)
+            .find('.sub')
+            .stop()
+            .fadeTo("fast", 1)
+            .show();
+          if ($(this).find('.pks').length) {
+            $('#mini-normal').css("opacity", 0);
+            $('#mini-call').css("opacity", 0);
+          }
+        }
+
+        function megaHoverOut() {
+          var $curSub = $(this).find('.sub');
+          // 已经隐藏，无需再次执行
+          if ($curSub.css("display") == "none" && $curSub.css("opacity") == "0") {
+            return;
+          }
+          
+          $curSub
+            .stop()
+            .fadeTo("fast", 0, function() {
+              $(this).hide();
+            });
+          if ($(this).find('.pks').length) {
+            $('#mini-normal').css("opacity", 0.8);
+            $('#mini-call').css("opacity", 0.8);
+          }
+        }
+
+        var config = {
+          sensitivity: 5, // number = sensitivity threshold (must be 1 or higher)
+          interval: 30, // number = milliseconds for onMouseOver polling interval
+          over: megaHoverOver, // function = onMouseOver callback (REQUIRED)
+          timeout: 50, // number = milliseconds delay before onMouseOut
+          out: megaHoverOut // function = onMouseOut callback (REQUIRED)
+        };
+
+        // 初次加载完成后存储下来，切换停车场时需重新绑定头部菜单事件[ul#topnav > li]: hoverIntent
+        if (Template7.global) Template7.global.hoverConfig = config;
+
+        $("ul#topnav li .sub").css({ opacity: "0" });
+        $("ul#topnav > li").hoverIntent(config);
+        
+        $("ul#topnav1 li .sub").css({ opacity: "0" });
+        $("ul#topnav1 > li").hoverIntent(config);
+
+        $(".jkdd li .sub").css({ opacity: "0" });
+        $(".jkdd > li").hoverIntent(config);
+      });
+      // // 注册 service worker（https协议 或者 本地支持serviceWorker）
+      // if ('serviceWorker' in navigator) {
+      //   navigator.serviceWorker.register('sw.js').then(function (registration) {
+      //     console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      //   }).catch(function (err) {// 注册失败
+      //     console.log('ServiceWorker registration failed: ', err);
+      //   });
+      // }
+    </script>
+  </body>
+</html>
