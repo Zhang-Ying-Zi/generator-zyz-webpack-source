@@ -1,4 +1,6 @@
 const autoprefixer = require("autoprefixer");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = function(BuildMode) {
   function generateBaseCssLoader(appendLoaders) {
@@ -6,15 +8,10 @@ module.exports = function(BuildMode) {
     const baseCssLoaders = [];
     if (BuildMode === "development") {
       baseCssLoaders.push("style-loader");
-    } else {
+    }
+    if (BuildMode === "production") {
       baseCssLoaders.push({
-        loader: "file-loader",
-        options: {
-          name: "[name].[contenthash:4].css"
-        }
-      });
-      baseCssLoaders.push({
-        loader: "extract-loader",
+        loader: MiniCssExtractPlugin.loader,
         options: {}
       });
     }
@@ -55,54 +52,59 @@ module.exports = function(BuildMode) {
     });
     return baseCssLoaders.concat(appendLoaders);
   }
-  const cssLoader = generateBaseCssLoader();
-  const lessLoader = generateBaseCssLoader([
-    {
-      loader: "less-loader",
-      options: {
-        strictMath: true
-        //noIeCompat: false
-      }
-    }
-  ]);
-  const scssLoader = generateBaseCssLoader([
-    {
-      loader: "sass-loader",
-      options: {
-        sourceMap: true
-      }
-    }
-  ]);
 
   const moduleConfig = {
     rules: [
       {
         test: /\.css$/,
-        use: cssLoader
+        use: generateBaseCssLoader()
       },
       {
         test: /\.less$/,
-        use: lessLoader
+        use: generateBaseCssLoader([
+          {
+            loader: "less-loader",
+            options: {
+              sourceMap: true
+            }
+          }
+        ])
       },
       {
         test: /\.s(a|c)ss$/,
-        use: scssLoader
+        use: generateBaseCssLoader([
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true
+            }
+          }
+        ])
       }
     ]
   };
 
   const pluginsConfig = [];
-  // if (BuildMode === "production") {
-  //   pluginsConfig.push(
-  //     new MiniCssExtractPlugin({
-  //       filename: "[name].[contenthash:4].css",
-  //       chunkFilename: "[name].[contenthash:4].[id].css"
-  //     })
-  //   );
-  // }
+  if (BuildMode === "production") {
+    pluginsConfig.push(
+      new MiniCssExtractPlugin({
+        filename: "[name].[contenthash:4].css",
+        chunkFilename: "[name].[contenthash:4].[id].js"
+      })
+    );
+  }
+
+  const minimizer = [];
+  if (BuildMode === "production") {
+    minimizer.push(new CssMinimizerPlugin());
+  }
 
   return {
     module: moduleConfig,
-    plugins: pluginsConfig
+    plugins: pluginsConfig,
+    optimization: {
+      minimize: true,
+      minimizer: minimizer
+    }
   };
 };

@@ -8,7 +8,7 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const CONSTANT = require("./CONSTANT.js");
 const cssConfig = require("./webpack-css-config.js");
 const vueConfig = require("./webpack-vue-config.js");
-const reactConfig = require("./webpack-react-config.js");
+const jsxConfig = require("./webpack-jsx-config.js");
 const tsConfig = require("./webpack-ts-config.js");
 const f7Config = require("./webpack-framework7-config.js");
 
@@ -31,14 +31,6 @@ const moduleConfig = {
     {
       test: /\.(html)$/,
       use: ["html-loader"]
-    },
-    {
-      test: /\.(csv|tsv)$/,
-      use: ["csv-loader"]
-    },
-    {
-      test: /\.xml$/,
-      use: ["xml-loader"]
     }
   ]
 };
@@ -55,15 +47,15 @@ const pluginsConfig = [
       removeAttributeQuotes: true,
       removeComments: true,
       collapseWhitespace: true,
-      removeScriptTypeAttributes: true,
-      removeStyleLinkTypeAttributes: true
+      removeScriptTypeAttributes: false,
+      removeStyleLinkTypeAttributes: false
     }
   })
 ];
-
 if (BuildMode === "development") {
   pluginsConfig.push(new webpack.HotModuleReplacementPlugin());
-} else {
+}
+if (BuildMode === "production") {
   pluginsConfig.push(
     new BundleAnalyzerPlugin({
       analyzerMode: "static",
@@ -83,7 +75,7 @@ const config = {
     path: OutputPathBase,
     filename: "[name].[contenthash:4].js", // [id] [name] [contenthash] [chunkhash] [hash]
     chunkFilename: "[name].[contenthash:4].[id].js",
-    assetModuleFilename: "images/[name].[hash:4][ext][query]",
+    assetModuleFilename: "assets/[name].[hash:4][ext][query]",
     publicPath: "" // the url to the output directory resolved relative to the HTML page
   },
   module: moduleConfig,
@@ -165,7 +157,7 @@ module.exports = merge(
   config,
   cssConfig(BuildMode),
   // vueConfig(BuildMode),
-  reactConfig(BuildMode),
+  jsxConfig(BuildMode),
   tsConfig(BuildMode),
   f7Config(BuildMode)
 );

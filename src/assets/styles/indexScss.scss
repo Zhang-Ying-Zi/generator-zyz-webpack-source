@@ -1,0 +1,21 @@
+html {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+}
+
+:global {
+  #root {
+    border: 10px solid blue;
+    background: url(../images/man.jpg) bottom right repeat;
+    width: 300px;
+  }
+  #root > img {
+    width: 100px;
+  }
+}
+
+.testScssClassName {
+  background-color: gray;
+}
