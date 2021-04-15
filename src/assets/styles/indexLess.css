@@ -8,7 +8,7 @@ html {
   height: 100%;
   background-color: red;
 }
-:global #root {
+:global #reactroot {
   border: 1px solid blue;
   background: url(../images/man.jpg) bottom right repeat;
 }

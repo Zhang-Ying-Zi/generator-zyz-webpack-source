@@ -3,9 +3,10 @@ const webpack = require("webpack");
 const { merge } = require("webpack-merge");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
-const CONSTANT = require("./CONSTANT.js");
+const devConfig = require("./webpack-dev-config.js");
 const cssConfig = require("./webpack-css-config.js");
 const jsConfig = require("./webpack-js-config.js");
 const tsConfig = require("./webpack-ts-config.js");
@@ -15,59 +16,15 @@ const f7Config = require("./webpack-framework7-config.js");
 
 const BuildMode =
   process.env.NODE_ENV === "development" ? "development" : "production";
+const isDevelopment = BuildMode === "development";
+const isProduction = BuildMode === "production";
 const EntryPathBase = path.resolve(__dirname, "src");
 const OutputPathBase = path.resolve(__dirname, "dist");
 const jsExtension = ".js"; // .js .ts
 
-const moduleConfig = {
-  rules: [
-    {
-      test: /\.(woff|woff2|eot|ttf|otf|ogg|m4a)$/,
-      type: "asset/resource" // asset/resource  asset/inline  asset/source  asset
-    },
-    {
-      test: /\.(png|svg|jpe?g|gif)$/,
-      type: "asset/resource"
-    },
-    {
-      test: /\.(html)$/,
-      use: ["html-loader"]
-    }
-  ]
-};
-
-const pluginsConfig = [
-  new webpack.ProgressPlugin(),
-  new CleanWebpackPlugin(),
-  new HtmlWebPackPlugin({
-    filename: "index.html",
-    template: path.join(EntryPathBase, "index.html"),
-    favicon: path.join(EntryPathBase, "favicon.ico"),
-    hash: true,
-    minify: {
-      removeAttributeQuotes: true,
-      removeComments: true,
-      collapseWhitespace: true,
-      removeScriptTypeAttributes: false,
-      removeStyleLinkTypeAttributes: false
-    }
-  })
-];
-if (BuildMode === "development") {
-  pluginsConfig.push(new webpack.HotModuleReplacementPlugin());
-}
-if (BuildMode === "production") {
-  pluginsConfig.push(
-    new BundleAnalyzerPlugin({
-      analyzerMode: "static", // server，static，json，disabled
-      openAnalyzer: false
-    })
-  );
-}
-
-const config = {
+const WebpackConfig = {
   mode: BuildMode, // "production" | "development" | "none"
-  devtool: BuildMode === "production" ? "source-map" : "inline-source-map",
+  devtool: isProduction ? "source-map" : "inline-source-map",
   target: "web", // web async-node node browserslist
   entry: {
     main: path.join(EntryPathBase, "index" + jsExtension)
@@ -79,8 +36,45 @@ const config = {
     assetModuleFilename: "assets/[name].[hash:4][ext][query]",
     publicPath: "" // the url to the output directory resolved relative to the HTML page
   },
-  module: moduleConfig,
-  plugins: pluginsConfig,
+  module: {
+    rules: [
+      {
+        test: /\.(woff|woff2|eot|ttf|otf|ogg|m4a)$/,
+        type: "asset/resource" // asset/resource  asset/inline  asset/source  asset
+      },
+      {
+        test: /\.(png|svg|jpe?g|gif)$/,
+        type: "asset/resource"
+      },
+      {
+        test: /\.(html)$/,
+        use: ["html-loader"]
+      }
+    ]
+  },
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new CleanWebpackPlugin(),
+    new HtmlWebPackPlugin({
+      filename: "index.html",
+      template: path.join(EntryPathBase, "index.html"),
+      favicon: path.join(EntryPathBase, "favicon.ico"),
+      hash: true,
+      minify: {
+        removeAttributeQuotes: true,
+        removeComments: true,
+        collapseWhitespace: true,
+        removeScriptTypeAttributes: false,
+        removeStyleLinkTypeAttributes: false
+      }
+    }),
+    isDevelopment && new webpack.HotModuleReplacementPlugin(),
+    isProduction &&
+      new BundleAnalyzerPlugin({
+        analyzerMode: "static", // server，static，json，disabled
+        openAnalyzer: false
+      })
+  ].filter(Boolean),
   optimization: {
     // chunkIds: "size",
     // // method of generating ids for chunks
@@ -89,6 +83,9 @@ const config = {
     // mangleExports: "size",
     // // rename export names to shorter names
     minimize: true,
+    minimizer: [
+      isProduction && new TerserPlugin({ exclude: /node_modules/ })
+    ].filter(Boolean),
     splitChunks: {
       chunks: "all", // all async initial
       minSize: 1, // default to 20000 bytes
@@ -119,9 +116,9 @@ const config = {
     // options for resolving module requests
     // (does not apply to resolving of loaders)
     modules: ["node_modules", EntryPathBase],
-    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".vue"],
     alias: {
-      "react-dom": "@hot-loader/react-dom"
+      // "react-dom": "@hot-loader/react-dom"
       // // a list of module name aliases
       // // aliases are imported relative to the current context
       // "module": "new-module",
@@ -138,29 +135,15 @@ const config = {
   }
 };
 
-if (BuildMode === "development") {
-  config.devServer = {
-    // proxy: {
-    //   "/api": "http://localhost:3000"
-    // },
-    contentBase: OutputPathBase,
-    compress: true, // enable gzip compression
-    historyApiFallback: true, // true for index.html upon 404, object for multiple paths
-    hot: true, // hot module replacement. Depends on HotModuleReplacementPlugin
-    noInfo: false, // only errors & warns on hot reload
-    https: false, // true for self-signed, object for cert authority
-    host: CONSTANT.clientHost,
-    port: CONSTANT.clientPort,
-    open: true
-  };
-}
-
 module.exports = merge(
-  config,
-  cssConfig(BuildMode),
-  jsConfig(BuildMode),
-  tsConfig(BuildMode),
-  reactConfig(BuildMode),
-  // vueConfig(BuildMode),
-  f7Config(BuildMode)
+  [
+    vueConfig(BuildMode), // VueLoaderPlugin 需要放在 HtmlWebPackPlugin 之前
+    WebpackConfig,
+    isDevelopment && devConfig(OutputPathBase),
+    cssConfig(BuildMode),
+    jsConfig(BuildMode),
+    tsConfig(BuildMode),
+    reactConfig(BuildMode),
+    f7Config(BuildMode)
+  ].filter(Boolean)
 );

@@ -7,17 +7,19 @@ import indexLess from "./assets/styles/indexLess.less";
 import indexScss from "./assets/styles/indexScss.scss";
 import "./ts";
 import "./ReactIndex";
+import "./ReactIndexJS";
+import "./VueIndex";
 
-log("Hello Main");
+log("Hello Main 2");
 log(ImgMan);
-log("end of index");
+log("end of index 2");
 
 function addElement(className) {
   // 创建一个新的 div 元素
   let newDiv = document.createElement("div");
   newDiv.className = className;
   // 给它一些内容
-  let newContent = document.createTextNode("Hi there and greetings!");
+  let newContent = document.createTextNode("Hi there and greetings !");
   // 添加文本节点 到这个新的 div 元素
   newDiv.appendChild(newContent);
 
@@ -28,3 +30,7 @@ function addElement(className) {
 
 addElement(indexLess.testLessClassName);
 addElement(indexScss.testScssClassName);
+
+if (module.hot) {
+  module.hot.accept();
+}

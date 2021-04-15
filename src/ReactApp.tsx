@@ -9,9 +9,9 @@ class App extends React.Component<Props> {
     const { name } = this.props;
     return (
       <>
-        <h1>
-          Hello {name}
-        </h1>
+        <h3>
+          {name} Parsed!
+        </h3>
       </>
     );
   }
