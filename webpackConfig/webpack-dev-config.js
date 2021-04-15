@@ -1,4 +1,4 @@
-const CONSTANT = require("./CONSTANT.js");
+const CONSTANT = require("../CONSTANT.js");
 
 if (module.hot) module.hot.accept();
 

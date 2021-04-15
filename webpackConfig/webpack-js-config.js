@@ -10,7 +10,7 @@ module.exports = function(BuildMode) {
           use: {
             loader: "babel-loader",
             options: {
-              configFile: path.resolve(__dirname, "babel.config.json")
+              configFile: path.resolve(__dirname, "../babel.config.json")
               // presets: ["@babel/preset-env"],
             }
           }

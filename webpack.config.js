@@ -6,12 +6,12 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
-const devConfig = require("./webpack-dev-config.js");
-const cssConfig = require("./webpack-css-config.js");
-const jsConfig = require("./webpack-js-config.js");
-const tsConfig = require("./webpack-ts-config.js");
-const reactConfig = require("./webpack-react-config.js");
-const vueConfig = require("./webpack-vue-config.js");
+const devConfig = require("./webpackConfig/webpack-dev-config.js");
+const cssConfig = require("./webpackConfig/webpack-css-config.js");
+const jsConfig = require("./webpackConfig/webpack-js-config.js");
+const tsConfig = require("./webpackConfig/webpack-ts-config.js");
+const reactConfig = require("./webpackConfig/webpack-react-config.js");
+const vueConfig = require("./webpackConfig/webpack-vue-config.js");
 
 const BuildMode =
   process.env.NODE_ENV === "development" ? "development" : "production";
