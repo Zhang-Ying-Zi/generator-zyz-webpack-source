@@ -12,7 +12,6 @@ const jsConfig = require("./webpack-js-config.js");
 const tsConfig = require("./webpack-ts-config.js");
 const reactConfig = require("./webpack-react-config.js");
 const vueConfig = require("./webpack-vue-config.js");
-const f7Config = require("./webpack-framework7-config.js");
 
 const BuildMode =
   process.env.NODE_ENV === "development" ? "development" : "production";
@@ -143,7 +142,6 @@ module.exports = merge(
     cssConfig(BuildMode),
     jsConfig(BuildMode),
     tsConfig(BuildMode),
-    reactConfig(BuildMode),
-    f7Config(BuildMode)
+    reactConfig(BuildMode)
   ].filter(Boolean)
 );
