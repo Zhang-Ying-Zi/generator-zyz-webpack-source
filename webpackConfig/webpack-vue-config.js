@@ -1,6 +1,8 @@
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 module.exports = function(BuildMode) {
+  const isDevelopment = BuildMode === "development";
+
   return {
     module: {
       rules: [
@@ -17,10 +19,15 @@ module.exports = function(BuildMode) {
     },
     plugins: [new VueLoaderPlugin()],
     resolve: {
-      alias: {
-        // 使用完整版而不是运行时版本
-        // vue$: "vue/dist/vue.esm.js", // 用 webpack 1 时需用 'vue/dist/vue.common.js'
-      },
+      alias: Object.assign(
+        {},
+        isDevelopment
+          ? {
+              // 使用完整版而不是运行时版本
+              vue$: "vue/dist/vue.esm.js", // 用 webpack 1 时需用 'vue/dist/vue.common.js'
+            }
+          : {}
+      ),
     },
   };
 };
