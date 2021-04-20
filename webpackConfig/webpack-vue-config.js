@@ -9,12 +9,18 @@ module.exports = function(BuildMode) {
           use: [
             {
               loader: "vue-loader",
-              options: {}
-            }
-          ]
-        }
-      ]
+              options: {},
+            },
+          ],
+        },
+      ],
     },
-    plugins: [new VueLoaderPlugin()]
+    plugins: [new VueLoaderPlugin()],
+    resolve: {
+      alias: {
+        // 使用完整版而不是运行时版本
+        // vue$: "vue/dist/vue.esm.js", // 用 webpack 1 时需用 'vue/dist/vue.common.js'
+      },
+    },
   };
 };
