@@ -6,26 +6,34 @@ module.exports = function(BuildMode) {
   const isDevelopment = BuildMode === "development";
   const isProduction = BuildMode === "production";
 
-  function generateBaseCssLoader(appendLoaders) {
+  function generateBaseCssLoader(appendLoaders, isVendor) {
     appendLoaders = appendLoaders || [];
     return [
       isDevelopment && "style-loader",
       isProduction && {
         loader: MiniCssExtractPlugin.loader,
-        options: {}
+        options: {},
       },
-      {
+      // 第三方css库不使用module模式
+      isVendor && {
+        loader: "css-loader",
+        options: {
+          sourceMap: false,
+          importLoaders: appendLoaders.length,
+        },
+      },
+      // 第三方css库不使用module模式
+      !isVendor && {
         loader: "css-loader",
         options: {
           sourceMap: true,
           importLoaders: 1 + appendLoaders.length,
           modules: {
-            // localIdentName: "[name]-[local]-[hash:base64:4]"
-            localIdentName: "[name]-[local]"
-          }
-        }
+            localIdentName: "[name]_[local]_[hash:base64:4]",
+          },
+        },
       },
-      {
+      !isVendor && {
         loader: "postcss-loader",
         // Necessary for external CSS imports to work
         // https://github.com/facebookincubator/create-react-app/issues/2677
@@ -43,13 +51,13 @@ module.exports = function(BuildMode) {
                   "Firefox >= 20",
                   "Chrome >= 20",
                   "Safari >=2",
-                  "Opera >=20"
-                ]
-              })
-            ]
-          }
-        }
-      }
+                  "Opera >=20",
+                ],
+              }),
+            ],
+          },
+        },
+      },
     ]
       .filter(Boolean)
       .concat(appendLoaders);
@@ -60,42 +68,50 @@ module.exports = function(BuildMode) {
       rules: [
         {
           test: /\.css$/,
-          use: generateBaseCssLoader()
+          include: /node_modules/,
+          use: generateBaseCssLoader([], true),
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: generateBaseCssLoader(),
         },
         {
           test: /\.less$/,
+          exclude: /node_modules/,
           use: generateBaseCssLoader([
             {
               loader: "less-loader",
               options: {
-                sourceMap: true
-              }
-            }
-          ])
+                sourceMap: true,
+              },
+            },
+          ]),
         },
         {
           test: /\.s(a|c)ss$/,
+          exclude: /node_modules/,
           use: generateBaseCssLoader([
             {
               loader: "sass-loader",
               options: {
-                sourceMap: true
-              }
-            }
-          ])
-        }
-      ]
+                sourceMap: true,
+              },
+            },
+          ]),
+        },
+      ],
     },
     plugins: [
       isProduction &&
         new MiniCssExtractPlugin({
           filename: "[name].[contenthash:4].css",
-          chunkFilename: "[name].[contenthash:4].[id].js"
-        })
+          chunkFilename: "[name].[contenthash:4].[id].js",
+        }),
     ].filter(Boolean),
     optimization: {
       minimize: true,
-      minimizer: [isProduction && new CssMinimizerPlugin()].filter(Boolean)
-    }
+      minimizer: [isProduction && new CssMinimizerPlugin()].filter(Boolean),
+    },
   };
 };
