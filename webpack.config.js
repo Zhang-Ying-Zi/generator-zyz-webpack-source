@@ -26,30 +26,30 @@ const WebpackConfig = {
   devtool: isProduction ? "source-map" : "inline-source-map",
   target: "web", // web async-node node browserslist
   entry: {
-    main: path.join(EntryPathBase, "index" + jsExtension)
+    main: path.join(EntryPathBase, "index" + jsExtension),
   },
   output: {
     path: OutputPathBase,
     filename: "[name].[contenthash:4].js", // [id] [name] [contenthash] [chunkhash] [hash]
     chunkFilename: "[name].[contenthash:4].[id].js",
-    assetModuleFilename: "assets/[name].[hash:4][ext][query]",
-    publicPath: "" // the url to the output directory resolved relative to the HTML page
+    assetModuleFilename: "assets/[name][ext][query]",
+    publicPath: "", // the url to the output directory resolved relative to the HTML page
   },
   module: {
     rules: [
       {
         test: /\.(woff|woff2|eot|ttf|otf|ogg|m4a)$/,
-        type: "asset/resource" // asset/resource  asset/inline  asset/source  asset
+        type: "asset/resource", // asset/resource  asset/inline  asset/source  asset
       },
       {
         test: /\.(png|svg|jpe?g|gif)$/,
-        type: "asset/resource"
+        type: "asset/resource",
       },
       {
         test: /\.(html)$/,
-        use: ["html-loader"]
-      }
-    ]
+        use: ["html-loader"],
+      },
+    ],
   },
   plugins: [
     new webpack.ProgressPlugin(),
@@ -58,21 +58,21 @@ const WebpackConfig = {
       filename: "index.html",
       template: path.join(EntryPathBase, "index.html"),
       favicon: path.join(EntryPathBase, "favicon.ico"),
-      hash: true,
+      hash: false,
       minify: {
         removeAttributeQuotes: true,
         removeComments: true,
         collapseWhitespace: true,
         removeScriptTypeAttributes: false,
-        removeStyleLinkTypeAttributes: false
-      }
+        removeStyleLinkTypeAttributes: false,
+      },
     }),
     isDevelopment && new webpack.HotModuleReplacementPlugin(),
     isProduction &&
       new BundleAnalyzerPlugin({
         analyzerMode: "static", // server，static，json，disabled
-        openAnalyzer: false
-      })
+        openAnalyzer: false,
+      }),
   ].filter(Boolean),
   optimization: {
     // chunkIds: "size",
@@ -83,7 +83,7 @@ const WebpackConfig = {
     // // rename export names to shorter names
     minimize: true,
     minimizer: [
-      isProduction && new TerserPlugin({ exclude: /node_modules/ })
+      isProduction && new TerserPlugin({ exclude: /node_modules/ }),
     ].filter(Boolean),
     splitChunks: {
       chunks: "all", // all async initial
@@ -99,15 +99,15 @@ const WebpackConfig = {
           test: /[\\/]node_modules[\\/]/,
           name: "vendors",
           priority: -10,
-          reuseExistingChunk: true
+          reuseExistingChunk: true,
         },
         default: {
           minChunks: 1,
           priority: -20,
-          reuseExistingChunk: true
-        }
-      }
-    }
+          reuseExistingChunk: true,
+        },
+      },
+    },
   },
   // externals: {jquery: 'jQuery'}
   // externals: ["react", /^@angular/] // Don't follow/bundle these modules, but request them at runtime from the environment
@@ -130,8 +130,8 @@ const WebpackConfig = {
       // // alias "module" -> "./app/third" and "module/file" -> "./app/third/file"
       // [path.resolve(__dirname, "app/module.js")]: path.resolve(__dirname, "app/alternative-module.js"),
       // // alias "./app/module.js" -> "./app/alternative-module.js"
-    }
-  }
+    },
+  },
 };
 
 module.exports = merge(
@@ -142,6 +142,6 @@ module.exports = merge(
     cssConfig(BuildMode),
     jsConfig(BuildMode),
     tsConfig(BuildMode),
-    reactConfig(BuildMode)
-  ].filter(Boolean)
+    reactConfig(BuildMode),
+  ].filter(Boolean),
 );
